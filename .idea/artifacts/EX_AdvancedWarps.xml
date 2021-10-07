@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="EX-AdvancedWarps">
+    <output-path>$PROJECT_DIR$/out/artifacts/EX_AdvancedWarps</output-path>
+    <root id="archive" name="EX-AdvancedWarps.jar">
+      <element id="module-output" name="EX-AdvancedWarps" />
+    </root>
+  </artifact>
+</component>

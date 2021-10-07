@@ -1,0 +1,22 @@
+#--------------------------------------------------------------------------
+name: EX-AdvancedWarps
+description: A patch and extension for Essentials.
+main: me.markchanel.plugin.EX.AdvancedWarps.Main
+#--------------------------------------------------------------------------
+website: https://gitee.com/markchanel/ex-advancedwarps
+author: Mark_Chanel
+version: 1.0.Beta.001
+api-version: "1.13"
+depend: [Essentials,Vault]
+loadbefore: [Essentials]
+
+commands:
+  advancedwarps:
+    description: Reload command.
+    usage: /advancedwarps reload
+    aliases: [aw,exaw]
+
+permissions:
+  advancedwarps.admin:
+    description: main permission.
+    default: op
