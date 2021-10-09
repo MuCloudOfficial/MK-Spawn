@@ -17,6 +17,7 @@ public class Config {
 
     private final Main main;
     public static ISettings EssC;
+    protected static File WarpFolder;
     public static File[] targetFiles;
     public static Map<String,Location> Warps = new HashMap<>();
     public static Map<String,List<Object>> RequiredItemWarps = new HashMap<>();
@@ -29,8 +30,9 @@ public class Config {
 
     public void initConfig(){
         EssC = new Settings((IEssentials) main.getServer().getPluginManager().getPlugin("Essentials"));
+        WarpFolder = new File(EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps");
+        targetFiles = WarpFolder.listFiles();
         refreshWarpFiles();
-        main.getServer().getConsoleSender().sendMessage(new File(EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps").getAbsolutePath());
         initEssWarps();
         searchRequirements();
     }
@@ -119,6 +121,8 @@ public class Config {
                             continue;
                         }
                         RequiredPermissionWarps.put(f.getString("name"), f.getString("Requirements.Permission"));
+                        continue;
+                    case "null":
                         continue;
                     default:
                         warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 定义的需求类型不合法. 该地标已忽略.");

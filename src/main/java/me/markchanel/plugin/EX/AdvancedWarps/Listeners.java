@@ -81,12 +81,17 @@ public class Listeners implements Listener {
         Player targetP = target.getBase();
         Location targetLoc = wme.getNewLocation();
         String targetN = wme.getWarpName();
+        File targetFile = new File(Config.WarpFolder.getAbsolutePath() + File.separator + targetN + ".yml");
         switch (wme.getCause()){
             case CREATE:
-                Config.Warps.put(wme.getWarpName(),wme.getNewLocation());
-                File targetCreateFile = new File(Config.EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps" + File.separator + targetN + ".yml");
+                if(targetFile.exists()){
+                    target.sendMessage(Main.Prefix + ChatColor.RED + "该地标已被定义过.");
+                    break;
+                }
+                Config.Warps.put(targetN,targetLoc);
                 try {
-                    f.load(targetCreateFile);
+                    targetFile.createNewFile();
+                    f.load(targetFile);
                     f.set("world",targetLoc.getWorld().getUID());
                     f.set("world-name",targetLoc.getWorld().getName());
                     f.set("x",targetLoc.getX());
@@ -95,8 +100,9 @@ public class Listeners implements Listener {
                     f.set("yaw",targetLoc.getYaw());
                     f.set("pitch",targetLoc.getPitch());
                     f.set("name",targetN);
+                    f.set("Requirements.Type","null");
                     f.set("lastowner",targetP.getUniqueId());
-                    f.save(targetCreateFile);
+                    f.save(targetFile);
                 } catch (IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
@@ -106,14 +112,16 @@ public class Listeners implements Listener {
             case DELETE:
                 Config.Warps.remove(targetN);
                 Config.getWarpFile(targetN).delete();
+                Config.RequiredMoneyWarps.remove(targetN);
+                Config.RequiredPermissionWarps.remove(targetN);
+                Config.RequiredItemWarps.remove(targetN);
                 Config.refreshWarpFiles();
                 target.sendMessage(Main.Prefix + ChatColor.YELLOW + "你删除了一个地标 " + targetN);
                 break;
             case UPDATE:
                 Config.Warps.replace(wme.getWarpName(),wme.getNewLocation());
-                File targetUpdateFile = Config.getWarpFile(wme.getWarpName());
                 try {
-                    f.load(targetUpdateFile);
+                    f.load(targetFile);
                     f.set("world",targetLoc.getWorld().getUID());
                     f.set("world-name",targetLoc.getWorld().getName());
                     f.set("x",targetLoc.getX());
@@ -122,7 +130,7 @@ public class Listeners implements Listener {
                     f.set("yaw",targetLoc.getYaw());
                     f.set("pitch",targetLoc.getPitch());
                     f.set("lastowner",wme.getUser().getBase().getUniqueId());
-                    f.save(targetUpdateFile);
+                    f.save(targetFile);
                 } catch (IOException | InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
