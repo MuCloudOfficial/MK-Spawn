@@ -5,7 +5,7 @@ main: me.markchanel.plugin.EX.AdvancedWarps.Main
 #--------------------------------------------------------------------------
 website: https://gitee.com/markchanel/ex-advancedwarps
 author: Mark_Chanel
-version: 1.0.Beta.001
+version: 1.1.2.Beta1
 api-version: "1.13"
 depend: [Essentials,Vault]
 loadbefore: [Essentials]

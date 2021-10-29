@@ -12,13 +12,15 @@ public class Main extends JavaPlugin implements Listener {
     public static final String Prefix = "§e[§bEX-AdvancedWarps§e] ";
     public static Economy eco = null;
     private final Config config = new Config(this);
+    private Commands commands = new Commands(this);
 
     @Override
     public void onEnable() {
         checkEssentials();
         checkVault();
         config.initConfig();
-        getCommand("advancedwarps").setExecutor(new commands(this));
+        getCommand("AdvancedWarps").setExecutor(commands);
+        getCommand("warps").setExecutor(commands);
         getServer().getPluginManager().registerEvents(new Listeners(),this);
         getServer().getConsoleSender().sendMessage(Prefix + ChatColor.YELLOW + "插件已加载完毕.");
 

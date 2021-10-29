@@ -1,13 +1,19 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
 import com.earth2me.essentials.Settings;
+import me.markchanel.plugin.EX.AdvancedWarps.Warps.ItemWarp;
+import me.markchanel.plugin.EX.AdvancedWarps.Warps.NormalWarp;
+import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
 import net.ess3.api.IEssentials;
 import net.ess3.api.ISettings;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +25,7 @@ public class Config {
     public static ISettings EssC;
     protected static File WarpFolder;
     public static File[] targetFiles;
-    public static Map<String,Location> Warps = new HashMap<>();
-    public static Map<String,List<Object>> RequiredItemWarps = new HashMap<>();
-    public static Map<String,Double> RequiredMoneyWarps = new HashMap<>();
-    public static Map<String,String> RequiredPermissionWarps = new HashMap<>();
+    public static List<Warp> Warps = new ArrayList<>();
 
     public Config(Main plugin){
         main = plugin;
@@ -32,12 +35,11 @@ public class Config {
         EssC = new Settings((IEssentials) main.getServer().getPluginManager().getPlugin("Essentials"));
         WarpFolder = new File(EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps");
         targetFiles = WarpFolder.listFiles();
-        refreshWarpFiles();
-        initEssWarps();
-        searchRequirements();
+        convertEssWarps();
+        initWarps();
     }
 
-    public void initEssWarps(){
+    public void convertEssWarps(){
         FileConfiguration fc = new YamlConfiguration();
         if(targetFiles.length == 0){
             main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "当前无地标可记录.");
@@ -47,13 +49,13 @@ public class Config {
             try {
                 fc.load(f);
                 if(fc.isSet("name")){
-                    Warps.put(fc.getString("name"),
+                    Warps.add(new NormalWarp(fc.getString("name"),
                             new Location(main.getServer().getWorld(fc.getString("world-name")),
                                             fc.getDouble("x"),
                                             fc.getDouble("y"),
                                             fc.getDouble("z"),
                                             Float.parseFloat(fc.getString("yaw")),
-                                            Float.parseFloat(fc.getString("pitch"))));
+                                            Float.parseFloat(fc.getString("pitch")))));
                 }
                 File newFile = new File(f.getParentFile().getAbsolutePath() + File.separator + fc.getString("name") + ".yml");
                 f.renameTo(newFile);
@@ -61,11 +63,10 @@ public class Config {
                 e.printStackTrace();
             }
         }
-        refreshWarpFiles();
         main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "已将所有 Essentials 地标转换至正常状态.");
     }
 
-    public void searchRequirements() {
+    public void initWarps() {
         List<String> warnMessages = new ArrayList<>();
         warnMessages.add(Main.Prefix + ChatColor.RED + "============================== 警告信息 ================================");
         FileConfiguration f = new YamlConfiguration();
@@ -101,12 +102,20 @@ public class Config {
                             warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Permission. 该地标已忽略.");
                             continue;
                         }
-                        List<Object> itemInfo = new ArrayList<>();
-                        itemInfo.add(f.getString("Requirements.Material").toUpperCase());
-                        itemInfo.add(f.getString("Requirements.ItemName"));
-                        itemInfo.add(f.getStringList("Requirements.ItemLore"));
-                        itemInfo.add(f.getInt("Requirements.Amount"));
-                        RequiredItemWarps.put(f.getString("name"), itemInfo);
+                        String material = f.getString("Requirements.Material");
+                        String name = f.getString("Requirements.ItemName");
+                        List<String> lores = f.getStringList("Requirements.ItemLore");
+                        Integer amount = f.getInt("Requirements.Amount");
+                        if(Material.getMaterial(material) == null){
+                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 定义的需求 Item 非法. 该地标已忽略.");
+                            continue;
+                        }
+                        ItemStack is = new ItemStack(Material.getMaterial(material),amount);
+                        ItemMeta im = is.getItemMeta();
+                        im.setDisplayName(name);
+                        im.setLore(lores);
+                        is.setItemMeta(im);
+                        Warps.add(new ItemWarp());
                         continue;
                     case "money":
                         if (!f.isSet("Requirements.Amount")) {
