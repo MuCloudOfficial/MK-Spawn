@@ -3,7 +3,7 @@ package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class NormalWarp extends Warp<Object>{
+public class NormalWarp extends Warp{
 
     public NormalWarp(String name, Location location){
         super(name,location,WarpType.NORMAL);

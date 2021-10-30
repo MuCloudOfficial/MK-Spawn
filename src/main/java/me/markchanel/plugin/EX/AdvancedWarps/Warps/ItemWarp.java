@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class ItemWarp extends Warp<ItemStack>{
+public class ItemWarp extends Warp{
 
     private ItemStack RequiredItem;
 
@@ -32,7 +32,6 @@ public class ItemWarp extends Warp<ItemStack>{
         return RequiredItem.getType();
     }
 
-    @Override
     public ItemStack getRequirements() {
         return RequiredItem;
     }

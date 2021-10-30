@@ -1,10 +1,10 @@
 package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 
-import me.markchanel.plugin.EX.AdvancedWarps.Main;
+import me.markchanel.plugin.EX.AdvancedWarps.Config;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class MoneyWarp extends Warp<Double>{
+public class MoneyWarp extends Warp{
 
     private double Amount;
 
@@ -13,13 +13,12 @@ public class MoneyWarp extends Warp<Double>{
         Amount = amount;
     }
 
-    @Override
     public Double getRequirements() {
         return Amount;
     }
 
     @Override
     public Boolean checkHasRequirements(Player target) {
-        return (Main.eco.getBalance(target) >= Amount);
+        return (Config.getEco().getBalance(target) >= Amount);
     }
 }

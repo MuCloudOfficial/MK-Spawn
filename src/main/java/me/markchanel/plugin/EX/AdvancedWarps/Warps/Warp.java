@@ -1,30 +1,22 @@
 package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 
-import me.markchanel.plugin.EX.AdvancedWarps.Config;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public abstract class Warp<T> {
+public abstract class Warp {
 
-    private String WarpName;
+    private final String WarpName;
     private Location WarpLocation;
-    private File WarpFile;
+    private final File WarpFile;
     private WarpType Type;
-
-    Warp(){
-        WarpName = null;
-        WarpLocation = null;
-        WarpFile = null;
-        Type = WarpType.NORMAL;
-    }
 
     Warp(String name,Location location,WarpType type){
         WarpName = name;
         WarpLocation = location;
         Type = type;
-        WarpFile = Config.getWarpFile(name);
+        WarpFile = WarpPool.getWarpFile(this);
     }
 
     public String getName(){
@@ -47,7 +39,6 @@ public abstract class Warp<T> {
         return Type;
     }
 
-    public abstract T getRequirements();
     public abstract Boolean checkHasRequirements(Player target);
 
 }

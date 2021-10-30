@@ -1,11 +1,10 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
 import com.earth2me.essentials.Settings;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.ItemWarp;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.NormalWarp;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
+import me.markchanel.plugin.EX.AdvancedWarps.Warps.*;
 import net.ess3.api.IEssentials;
 import net.ess3.api.ISettings;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,169 +13,196 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 public class Config {
 
     private final Main main;
-    public static ISettings EssC;
-    protected static File WarpFolder;
-    public static File[] targetFiles;
-    public static List<Warp> Warps = new ArrayList<>();
+    private static Economy eco = null;
+    private static ISettings EssC;
+    private final WarpPool pool;
 
     public Config(Main plugin){
         main = plugin;
+        pool = new WarpPool();
     }
 
     public void initConfig(){
-        EssC = new Settings((IEssentials) main.getServer().getPluginManager().getPlugin("Essentials"));
-        WarpFolder = new File(EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps");
-        targetFiles = WarpFolder.listFiles();
+        checkEssentials();
+        checkVault();
+        EssC = new Settings((IEssentials) Objects.requireNonNull(main.getServer().getPluginManager().getPlugin("Essentials")));
         convertEssWarps();
-        initWarps();
+    }
+
+    public void checkEssentials(){
+        if(!main.getServer().getPluginManager().isPluginEnabled("Essentials")){
+            main.getServer().getPluginManager().disablePlugin(main);
+            throw new RuntimeException(Main.Prefix + ChatColor.RED + "Essentials Not found! Plugin Disabling.");
+        }
+        main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.GRAY + "已侦测到 Essentials.");
+    }
+
+    public void checkVault(){
+        if(!main.getServer().getPluginManager().isPluginEnabled("Vault")){
+            main.getServer().getPluginManager().disablePlugin(main);
+            throw new RuntimeException(Main.Prefix + ChatColor.RED + "Vault Not found! Plugin Disabling.");
+        }
+        RegisteredServiceProvider<Economy> rsp = main.getServer().getServicesManager().getRegistration(Economy.class);
+        if(rsp == null){
+            main.getServer().getPluginManager().disablePlugin(main);
+            throw new RuntimeException(Main.Prefix + ChatColor.RED + "Economy Module Not found! Plugin Disabling.");
+        }
+        eco = rsp.getProvider();
     }
 
     public void convertEssWarps(){
         FileConfiguration fc = new YamlConfiguration();
-        if(targetFiles.length == 0){
+        if(pool.listWarpsFile().length == 0){
             main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "当前无地标可记录.");
             return;
         }
-        for(File f : targetFiles){
+        for(File f : pool.listWarpsFile()){
             try {
                 fc.load(f);
-                if(fc.isSet("name")){
-                    Warps.add(new NormalWarp(fc.getString("name"),
-                            new Location(main.getServer().getWorld(fc.getString("world-name")),
-                                            fc.getDouble("x"),
-                                            fc.getDouble("y"),
-                                            fc.getDouble("z"),
-                                            Float.parseFloat(fc.getString("yaw")),
-                                            Float.parseFloat(fc.getString("pitch")))));
+                if(fc.get("Requirement") == null){
+                    continue;
                 }
-                File newFile = new File(f.getParentFile().getAbsolutePath() + File.separator + fc.getString("name") + ".yml");
-                f.renameTo(newFile);
+                if(fc.get("name") != null){
+                    fc.set("Requirement.Type","Normal");
+                    fc.save(f);
+                    File newFile = new File(f.getParentFile().getAbsolutePath() + File.separator + fc.getString("name") + ".yml");
+                    f.renameTo(newFile);
+                }
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
             }
         }
-        main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "已将所有 Essentials 地标转换至正常状态.");
+        loadWarps();
     }
 
-    public void initWarps() {
-        List<String> warnMessages = new ArrayList<>();
-        warnMessages.add(Main.Prefix + ChatColor.RED + "============================== 警告信息 ================================");
-        FileConfiguration f = new YamlConfiguration();
-        if (targetFiles == null) {
-            return;
-        }
-        for (File file : targetFiles) {
+    private void loadWarps(){
+        FileConfiguration fc = new YamlConfiguration();
+        for(File f : pool.listWarpsFile()){
             try {
-                f.load(file);
-                if (!f.isSet("Requirements")) {
-                    warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求块. 该地标已忽略.");
+                fc.load(f);
+                if(fc.get("name") == null){
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 基本 warp 数据");
                     continue;
                 }
-                if (!f.isSet("Requirements.Type")) {
-                    warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求类型. 该地标已忽略.");
+                if(fc.get("x") == null ||
+                        fc.get("y") == null ||
+                        fc.get("z") == null ||
+                        fc.get("yaw") == null ||
+                        fc.get("pitch") == null){
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 基本 warp 数据");
                     continue;
                 }
-                switch (f.getString("Requirements.Type").toLowerCase()) {
-                    case "item":
-                        if (!f.isSet("Requirements.Material")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Item. 该地标已忽略.");
-                            continue;
+                if(fc.get("Requirement.Type") == null){
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求类型   已转换为普通地标.");
+                    fc.set("Requirement.Type","NORMAL");
+                    fc.save(f);
+                }
+                String warpName = fc.getString("name");
+                Location l = new Location(
+                        main.getServer().getWorld(fc.getString("world-name")),
+                        fc.getDouble("x"),
+                        fc.getDouble("y"),
+                        fc.getDouble("z"),
+                        (float)fc.getDouble("yaw"),
+                        (float)fc.getDouble("pitch")
+                );
+                switch (fc.getString("Requirement.Type")){
+                    case "NORMAL":
+                        Warp warp = new NormalWarp(warpName,l);
+                        pool.add(warp);
+                        break;
+                    case "MONEY":
+                        if(fc.get("Requirement.Amount") == null){
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            break;
                         }
-                        if (!f.isSet("Requirements.Amount")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Item 数量. 该地标已忽略.");
-                            continue;
+                        int amount = fc.getInt("Requirement.Amount");
+                        Warp warp1 = new MoneyWarp(warpName,l,amount);
+                        pool.add(warp1);
+                        break;
+                    case "PERMISSION":
+                        String permission = fc.getString("Requirement.Permission");
+                        if(permission == null){
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            break;
                         }
-                        if (!f.isSet("Requirements.ItemName")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Permission. 该地标已忽略.");
-                            continue;
+                        Warp warp2 = new PermissionWarp(warpName,l,permission);
+                        pool.add(warp2);
+                        break;
+                    case "ITEM":
+                        String item_name;
+                        List<String> item_lore;
+                        int item_amount;
+                        if(fc.get("Requirement.Material") == null){
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            break;
                         }
-                        if (!f.isSet("Requirements.ItemLore")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Permission. 该地标已忽略.");
-                            continue;
+                        Material m = Material.getMaterial(fc.getString("Requirement.Material"));
+                        if(m == null){
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            break;
                         }
-                        String material = f.getString("Requirements.Material");
-                        String name = f.getString("Requirements.ItemName");
-                        List<String> lores = f.getStringList("Requirements.ItemLore");
-                        Integer amount = f.getInt("Requirements.Amount");
-                        if(Material.getMaterial(material) == null){
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 定义的需求 Item 非法. 该地标已忽略.");
-                            continue;
+                        if(fc.get("Requirement.Amount") == null){
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            break;
                         }
-                        ItemStack is = new ItemStack(Material.getMaterial(material),amount);
+
+                        item_amount = fc.getInt("Requirement.Amount");
+
+                        ItemStack is = new ItemStack(m,item_amount);
                         ItemMeta im = is.getItemMeta();
-                        im.setDisplayName(name);
-                        im.setLore(lores);
-                        is.setItemMeta(im);
-                        Warps.add(new ItemWarp());
-                        continue;
-                    case "money":
-                        if (!f.isSet("Requirements.Amount")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Money 数量. 该地标已忽略.");
-                            continue;
+
+                        if(fc.get("Requirement.Name") != null){
+                            item_name = fc.getString("Requirement.Name");
+                            im.setDisplayName(item_name);
+                            is.setItemMeta(im);
+                        }else{
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已忽略.");
                         }
-                        RequiredMoneyWarps.put(f.getString("name"), f.getDouble("Requirements.Amount"));
-                        continue;
-                    case "permission":
-                        if (!f.isSet("Requirements.Permission")) {
-                            warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 并没有定义需求 Permission. 该地标已忽略.");
-                            continue;
+                        if(fc.get("Requirement.Lore") != null && fc.isList("Requirement.Lore")){
+                            item_lore = fc.getStringList("Requirement.Lore");
+                            im.setLore(item_lore);
+                            is.setItemMeta(im);
+                        }else{
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已忽略.");
                         }
-                        RequiredPermissionWarps.put(f.getString("name"), f.getString("Requirements.Permission"));
-                        continue;
-                    case "null":
-                        continue;
+                        Warp warp3 = new ItemWarp(warpName,l,is);
+                        pool.add(warp3);
+                        break;
                     default:
-                        warnMessages.add(Main.Prefix + ChatColor.RED + "在定义 " + file.getName() + "时产生了错误: 定义的需求类型不合法. 该地标已忽略.");
+                        main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求类型   已跳过.");
+                        break;
                 }
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
             }
         }
-        if (warnMessages.size() != 1) {
-            warnMessages.add(Main.Prefix + ChatColor.RED + "=======================================================================");
-            for (String s : warnMessages) {
-                main.getServer().getConsoleSender().sendMessage(s);
-            }
-        } else {
-            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "已装载地标.");
-        }
     }
 
-    public static void refreshWarpFiles(){
-        targetFiles = new File(EssC.getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps").listFiles();
+    public static Economy getEco() {
+        return eco;
     }
 
-    public static File getWarpFile(String warpName){
-        try {
-            FileConfiguration f = new YamlConfiguration();
-            refreshWarpFiles();
-            for(File file : targetFiles){
-                f.load(file);
-                if(warpName.equals(f.getString("name"))){
-                    return file;
-                }
-            }
-            return null;
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static ISettings getEssC() {
+        return EssC;
     }
 
-    public void saveConfig(){
-        EssC = null;
-        targetFiles = null;
-        Warps.clear();
-        RequiredItemWarps.clear();
-        RequiredMoneyWarps.clear();
-        RequiredPermissionWarps.clear();
+    public void reload(){
+        pool.clearPool();
+        loadWarps();
+    }
+
+    public void clearConfig(){
+        pool.clearPool();
     }
 }
