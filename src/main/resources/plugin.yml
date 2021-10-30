@@ -11,10 +11,10 @@ depend: [Essentials,Vault]
 loadbefore: [Essentials]
 
 commands:
-  advancedwarps:
+  AdvancedWarps:
     description: Reload command.
-    usage: /advancedwarps reload
-    aliases: [aw,exaw]
+    usage: /aw [info/reload]
+    aliases: [advancedwarps,aw,exaw]
 
 permissions:
   advancedwarps.admin:

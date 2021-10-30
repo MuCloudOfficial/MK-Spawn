@@ -1,9 +1,12 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
+import com.earth2me.essentials.Essentials;
 import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -14,8 +17,8 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         config.initConfig();
-        getCommand("AdvancedWarps").setExecutor(commands);
-        getCommand("warps").setExecutor(commands);
+        Objects.requireNonNull(getCommand("AdvancedWarps")).setExecutor(commands);
+        Objects.requireNonNull(getProvidingPlugin(Essentials.class).getCommand("warp")).setExecutor(commands);
         getServer().getPluginManager().registerEvents(new Listeners(),this);
         getServer().getConsoleSender().sendMessage(Prefix + ChatColor.YELLOW + "插件已加载完毕.");
     }

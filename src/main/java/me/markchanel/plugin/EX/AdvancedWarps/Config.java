@@ -25,11 +25,11 @@ public class Config {
     private final Main main;
     private static Economy eco = null;
     private static ISettings EssC;
-    private final WarpPool pool;
+    private final WarpPool pool = new WarpPool();
 
     public Config(Main plugin){
         main = plugin;
-        pool = new WarpPool();
+        pool.openPool();
     }
 
     public void initConfig(){

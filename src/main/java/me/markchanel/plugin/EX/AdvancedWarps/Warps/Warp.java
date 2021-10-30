@@ -10,7 +10,7 @@ public abstract class Warp {
     private final String WarpName;
     private Location WarpLocation;
     private final File WarpFile;
-    private WarpType Type;
+    private final WarpType Type;
 
     Warp(String name,Location location,WarpType type){
         WarpName = name;
@@ -43,9 +43,3 @@ public abstract class Warp {
 
 }
 
-enum WarpType{
-    NORMAL,
-    MONEY_WARP,
-    ITEM_WARP,
-    PERMISSION_WARP
-}
