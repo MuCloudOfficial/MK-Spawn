@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public static final String Prefix = "§7§l[§b§EX-AdvancedWarps§7§l] ";
+    public static final String Prefix = "§7§l[§c§lEX§7§l-§6§lAdvancedWarps§7§l] ";
     private final Config config = new Config(this);
     private final Commands commands = new Commands(this);
 

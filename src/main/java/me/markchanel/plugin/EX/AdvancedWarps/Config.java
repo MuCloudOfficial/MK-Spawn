@@ -29,13 +29,13 @@ public class Config {
 
     public Config(Main plugin){
         main = plugin;
-        pool.openPool();
     }
 
     public void initConfig(){
         checkEssentials();
         checkVault();
         EssC = new Settings((IEssentials) Objects.requireNonNull(main.getServer().getPluginManager().getPlugin("Essentials")));
+        pool.openPool();
         convertEssWarps();
     }
 
@@ -69,7 +69,7 @@ public class Config {
         for(File f : pool.listWarpsFile()){
             try {
                 fc.load(f);
-                if(fc.get("Requirement") == null){
+                if(fc.get("Requirement") != null){
                     continue;
                 }
                 if(fc.get("name") != null){
@@ -199,6 +199,8 @@ public class Config {
 
     public void reload(){
         pool.clearPool();
+        checkEssentials();
+        checkVault();
         loadWarps();
     }
 

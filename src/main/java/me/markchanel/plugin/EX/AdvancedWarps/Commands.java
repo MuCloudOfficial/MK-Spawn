@@ -19,8 +19,8 @@ public class Commands implements CommandExecutor {
     }
 
     private void sendHelpPage(CommandSender sender){
-        sender.sendMessage("§b§lEX§7§l-§e§lAdvancedWarps");
-        sender.sendMessage("§6作者: ");
+        sender.sendMessage("§c§lEX§7§l-§e§lAdvancedWarps");
+        sender.sendMessage("§6作者: &7&lMark_Chanel");
         sender.sendMessage("§6插件主页: §b https://gitee.com/markchanel/ex-advancedwarps");
         sender.sendMessage("§7§m------------------§b§l命令概述§7§m------------------");
         sender.sendMessage("§6 /aw info        显示插件描述及帮助                     ");
@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
             }
             return true;
         }
-        if(cmd.getName().equalsIgnoreCase("warp") || cmd.getName().equalsIgnoreCase(s)){
+        if(cmd.getName().equalsIgnoreCase("warps") || cmd.getName().equalsIgnoreCase(s)){
             if(pool.listWarpsName().size() == 0){
                 sender.sendMessage("&6当前无地标");
                 return true;
@@ -84,13 +84,12 @@ public class Commands implements CommandExecutor {
                 for(String messages : message){
                     sender.sendMessage(messages);
                 }
-                return true;
             }else{
                 String names = pool.listWarpsName().toString();
                 sender.sendMessage("§6当前地标列表:");
                 sender.sendMessage(names.substring(1,names.length()-2));
-                return true;
             }
+            return true;
         }
         return false;
     }
