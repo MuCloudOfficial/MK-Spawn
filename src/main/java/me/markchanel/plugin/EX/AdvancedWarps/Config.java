@@ -26,6 +26,7 @@ public class Config {
     private static Economy eco = null;
     private static ISettings EssC;
     private static WarpPool pool = new WarpPool();
+    private static final String Version = "1.0.0.Beta1";
 
     public Config(Main plugin){
         main = plugin;
@@ -195,6 +196,10 @@ public class Config {
 
     public static ISettings getEssC() {
         return EssC;
+    }
+
+    public static String getVersion(){
+        return Version;
     }
 
     public void reload(){

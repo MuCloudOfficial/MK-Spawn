@@ -1,19 +1,12 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.Trade;
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.config.EssentialsConfiguration;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
-import net.ess3.api.events.UserWarpEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Commands implements CommandExecutor {
@@ -26,10 +19,10 @@ public class Commands implements CommandExecutor {
     }
 
     private void sendHelpPage(CommandSender sender){
-        sender.sendMessage("§c§lEX§7§l-§e§lAdvancedWarps");
-        sender.sendMessage("§6作者: &7&lMark_Chanel");
+        sender.sendMessage("§c§lEX§7§l-§e§lAdvancedWarps  " + "§6§lVer §b§l" + Config.getVersion());
+        sender.sendMessage("§6作者: §7§lMark_Chanel");
         sender.sendMessage("§6插件主页: §b https://gitee.com/markchanel/ex-advancedwarps");
-        sender.sendMessage("§7§m------------------§b§l命令概述§7§m------------------");
+        sender.sendMessage("§7§m------------------§b§l命令概述§7§m-----------------------");
         sender.sendMessage("§6 /aw info        显示插件描述及帮助                     ");
         sender.sendMessage("§6 /warps          显示当前所有地标                       ");
         sender.sendMessage("§7§m---------------------------------------------------");
@@ -37,7 +30,7 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] ss) {
-        if (cmd.getName().equalsIgnoreCase("advancedwarps")) {
+        if (cmd.getName().equalsIgnoreCase("advancedwarps") || cmd.getName().equalsIgnoreCase(s)) {
             if (ss.length == 1) {
                 if (ss[0].equalsIgnoreCase("info")) {
                     sendHelpPage(sender);
@@ -49,6 +42,7 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
             }
+            sendHelpPage(sender);
             return true;
         }
         if (cmd.getName().equalsIgnoreCase("warps")) {
