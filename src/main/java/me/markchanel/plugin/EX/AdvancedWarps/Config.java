@@ -25,7 +25,7 @@ public class Config {
     private final Main main;
     private static Economy eco = null;
     private static ISettings EssC;
-    private final WarpPool pool = new WarpPool();
+    private static WarpPool pool = new WarpPool();
 
     public Config(Main plugin){
         main = plugin;
@@ -37,6 +37,7 @@ public class Config {
         EssC = new Settings((IEssentials) Objects.requireNonNull(main.getServer().getPluginManager().getPlugin("Essentials")));
         pool.openPool();
         convertEssWarps();
+        loadWarps();
     }
 
     public void checkEssentials(){
@@ -82,7 +83,6 @@ public class Config {
                 e.printStackTrace();
             }
         }
-        loadWarps();
     }
 
     private void loadWarps(){

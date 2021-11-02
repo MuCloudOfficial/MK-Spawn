@@ -3,7 +3,6 @@ package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import me.markchanel.plugin.EX.AdvancedWarps.Config;
-import me.markchanel.plugin.EX.AdvancedWarps.Main;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,7 +17,7 @@ import java.util.List;
 public class WarpPool {
 
     private static File WarpFolder;
-    private List<Warp> Pool;
+    private static List<Warp> Pool;
 
     public WarpPool(){}
 
@@ -87,7 +86,7 @@ public class WarpPool {
     }
 
     @Nullable public static File getWarpFile(Warp warp){
-        return new File(WarpFolder,warp.getName());
+        return new File(WarpFolder,warp.getName() + ".yml");
     }
 
     public List<String> listWarpsName(){
@@ -102,7 +101,7 @@ public class WarpPool {
         List<Warp> target = new ArrayList<>();
         List<String> names = new ArrayList<>();
         for(Warp warp : Pool){
-            if(warp.getType() != type){
+            if(warp.getType() == type){
                 target.add(warp);
             }
         }

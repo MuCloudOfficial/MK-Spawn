@@ -15,6 +15,9 @@ commands:
     description: Reload command.
     usage: /aw [info/reload]
     aliases: [advancedwarps,aw,exaw]
+  warps:
+    description: command form Essentials.
+    usage: /warp
 
 permissions:
   advancedwarps.admin:

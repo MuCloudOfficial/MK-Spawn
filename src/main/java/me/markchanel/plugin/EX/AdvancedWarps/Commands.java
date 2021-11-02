@@ -1,18 +1,25 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.Trade;
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.config.EssentialsConfiguration;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
+import net.ess3.api.events.UserWarpEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Commands implements CommandExecutor {
 
-    private Main main;
-    private WarpPool pool;
+    private final Main main;
+    private final WarpPool pool = new WarpPool();
 
     public Commands(Main plugin){
         main = plugin;
@@ -30,13 +37,13 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] ss) {
-        if(cmd.getName().equalsIgnoreCase("advancedwarps") || cmd.getName().equalsIgnoreCase(s)){
-            if(ss.length == 1){
-                if(ss[0].equalsIgnoreCase("info")){
+        if (cmd.getName().equalsIgnoreCase("advancedwarps")) {
+            if (ss.length == 1) {
+                if (ss[0].equalsIgnoreCase("info")) {
                     sendHelpPage(sender);
                     return true;
                 }
-                if(ss[0].equalsIgnoreCase("reload")){
+                if (ss[0].equalsIgnoreCase("reload")) {
                     main.onReload();
                     sender.sendMessage(Main.Prefix + "§a插件加载完毕");
                     return true;
@@ -44,53 +51,52 @@ public class Commands implements CommandExecutor {
             }
             return true;
         }
-        if(cmd.getName().equalsIgnoreCase("warps") || cmd.getName().equalsIgnoreCase(s)){
-            if(pool.listWarpsName().size() == 0){
-                sender.sendMessage("&6当前无地标");
+        if (cmd.getName().equalsIgnoreCase("warps")) {
+            if (pool.listWarpsName().size() == 0) {
+                sender.sendMessage("§6当前无地标");
                 return true;
+            } else {
+                sender.sendMessage("§6当前地标列表:");
             }
-            if(sender.isOp() || sender.hasPermission("advancedwarps.admin")){
+            if (sender.isOp() || sender.hasPermission("advancedwarps.admin")) {
                 List<String> message = new ArrayList<>();
-                if(pool.listHasRequirementWarpsName(WarpType.NORMAL).size() == 0){
-                    sender.sendMessage("&6当前无普通地标");
-                    return true;
-                }else{
+                if (pool.listHasRequirementWarpsName(WarpType.NORMAL).size() == 0) {
+                    message.add("§6当前无普通地标");
+                } else {
                     message.add("§6普通地标:");
                     String names = pool.listHasRequirementWarpsName(WarpType.NORMAL).toString();
-                    message.add(names.substring(1,names.length()-2));
+                    message.add(names.substring(1, names.length() - 1));
                 }
-                if(pool.listHasRequirementWarpsName(WarpType.MONEY_WARP).size() == 0){
-                    message.add("&6当前无需要金钱的地标");
-                }else{
+                if (pool.listHasRequirementWarpsName(WarpType.MONEY_WARP).size() == 0) {
+                    message.add("§6当前无需要金钱的地标");
+                } else {
                     message.add("§6需要金钱的地标:");
-                    String names = pool.listHasRequirementWarpsName(WarpType.NORMAL).toString();
-                    message.add(names.substring(1,names.length()-2));
+                    String names = pool.listHasRequirementWarpsName(WarpType.MONEY_WARP).toString();
+                    message.add(names.substring(1, names.length() - 1));
                 }
-                if(pool.listHasRequirementWarpsName(WarpType.PERMISSION_WARP).size() == 0){
-                    message.add("&6当前无需要权限的地标");
-                }else{
+                if (pool.listHasRequirementWarpsName(WarpType.PERMISSION_WARP).size() == 0) {
+                    message.add("§6当前无需要权限的地标");
+                } else {
                     message.add("§6需要权限的地标:");
-                    String names = pool.listHasRequirementWarpsName(WarpType.NORMAL).toString();
-                    message.add(names.substring(1,names.length()-2));
+                    String names = pool.listHasRequirementWarpsName(WarpType.PERMISSION_WARP).toString();
+                    message.add(names.substring(1, names.length() - 1));
                 }
-                if(pool.listHasRequirementWarpsName(WarpType.ITEM_WARP).size() == 0){
-                    message.add("&6当前无需要物品的地标");
-                }else{
+                if (pool.listHasRequirementWarpsName(WarpType.ITEM_WARP).size() == 0) {
+                    message.add("§6当前无需要物品的地标");
+                } else {
                     message.add("§6需要物品的地标:");
-                    String names = pool.listHasRequirementWarpsName(WarpType.NORMAL).toString();
-                    message.add(names.substring(1,names.length()-2));
+                    String names = pool.listHasRequirementWarpsName(WarpType.ITEM_WARP).toString();
+                    message.add(names.substring(1, names.length() - 1));
                 }
-                message.add(0,"&6当前地标列表:");
-                for(String messages : message){
+                for (String messages : message) {
                     sender.sendMessage(messages);
                 }
             }else{
                 String names = pool.listWarpsName().toString();
-                sender.sendMessage("§6当前地标列表:");
-                sender.sendMessage(names.substring(1,names.length()-2));
+                sender.sendMessage(names.substring(1, names.length() - 1));
             }
             return true;
         }
-        return false;
+        return true;
     }
 }

@@ -13,9 +13,10 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+
 public class Listeners implements Listener {
 
-    private WarpPool pool;
+    private final WarpPool pool = new WarpPool();
 
     @EventHandler
     public void WarpListener(UserWarpEvent uwe){
@@ -75,7 +76,6 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void SignCreateListener(SignCreateEvent sce){
-        sce.setCancelled(true);
         EssentialsSign.ISign sign = sce.getSign();
         String WarpPosition = sign.getLine(0);
         String WarpName = sign.getLine(1);
@@ -86,6 +86,7 @@ public class Listeners implements Listener {
         }
         if(pool.isContains(WarpName)){
             targetU.sendMessage("§4该地标未被定义过");
+            return;
         }
         WarpPosition = "§1§lWarp";
         Detail = "§6§l点击传送至";
@@ -96,7 +97,6 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void SignInteractListener(SignInteractEvent sie){
-        sie.setCancelled(true);
         EssentialsSign.ISign sign = sie.getSign();
         String Line1 = sign.getLine(0);
         String Line3 = sign.getLine(2);
