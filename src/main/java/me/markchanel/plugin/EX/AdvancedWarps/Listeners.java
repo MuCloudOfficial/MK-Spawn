@@ -23,9 +23,9 @@ public class Listeners implements Listener {
     @EventHandler
     public void WarpListener(UserWarpEvent uwe){
         uwe.setCancelled(true);
-        String targetWarp = uwe.getWarp();
+        Warp targetWarp = pool.getWarp(uwe.getWarp());
         IUser targetU = uwe.getUser();
-        checkTeleport(targetWarp,targetU);
+        targetWarp.teleportTo(targetU.getBase());
     }
 
     @EventHandler

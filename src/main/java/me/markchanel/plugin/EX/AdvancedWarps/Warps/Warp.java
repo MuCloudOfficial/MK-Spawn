@@ -23,8 +23,8 @@ public abstract class Warp {
         return WarpName;
     }
 
-    public void teleportTo(Player target){
-        target.teleport(WarpLocation);
+    protected Location getLocation(){
+        return WarpLocation;
     }
 
     public void setLocation(Location newLocation){
@@ -41,5 +41,6 @@ public abstract class Warp {
 
     public abstract Boolean checkHasRequirements(Player target);
 
+    public abstract void teleportTo(Player target);
 }
 

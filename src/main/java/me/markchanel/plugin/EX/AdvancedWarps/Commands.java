@@ -1,11 +1,7 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
-import net.ess3.api.IUser;
-import net.ess3.api.events.UserWarpEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -105,7 +101,7 @@ public class Commands implements CommandExecutor {
                             sender.sendMessage("§4该命令仅玩家可使用!");
                             return true;
                         }
-                        main.getServer().getPluginManager().callEvent(new UserWarpEvent((IUser) sender,ss[0],null));
+                        pool.getWarp(ss[0]).teleportTo((Player) sender);
                     }else{
                         sender.sendMessage("§4未定义过该地标! 传送被拒绝.");
                     }
