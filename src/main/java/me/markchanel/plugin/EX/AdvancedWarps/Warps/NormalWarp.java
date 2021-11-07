@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 public class NormalWarp extends Warp{
 
-    public NormalWarp(String name, Location location){
-        super(name,location,WarpType.NORMAL);
+    public NormalWarp(String name, Location location,int coolingDown){
+        super(name,location,coolingDown,WarpType.NORMAL);
     }
 
     @Override
@@ -16,7 +16,12 @@ public class NormalWarp extends Warp{
 
     @Override
     public void teleportTo(Player target) {
+        if(WarpPool.getCoolingDown(target)){
+            target.sendMessage("§4传送冷却中.  请稍后再试.");
+            return;
+        }
         target.sendMessage("§6你已被传送至地标 §e" + getName());
         target.teleport(getLocation());
+        WarpPool.addCoolingDown(target,getCoolingDown());
     }
 }

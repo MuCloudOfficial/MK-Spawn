@@ -36,7 +36,7 @@ public class Config {
         checkEssentials();
         checkVault();
         EssC = new Settings((IEssentials) Objects.requireNonNull(main.getServer().getPluginManager().getPlugin("Essentials")));
-        pool.openPool();
+        pool.openPool(main);
         convertEssWarps();
         loadWarps();
     }
@@ -92,7 +92,7 @@ public class Config {
             try {
                 fc.load(f);
                 if(fc.get("name") == null){
-                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 基本 warp 数据");
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 基本 warp 数据");
                     continue;
                 }
                 if(fc.get("x") == null ||
@@ -100,11 +100,11 @@ public class Config {
                         fc.get("z") == null ||
                         fc.get("yaw") == null ||
                         fc.get("pitch") == null){
-                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 基本 warp 数据");
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 基本 warp 数据");
                     continue;
                 }
                 if(fc.get("Requirement.Type") == null){
-                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求类型   已转换为普通地标.");
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求类型   已转换为普通地标.");
                     fc.set("Requirement.Type","NORMAL");
                     fc.save(f);
                 }
@@ -117,27 +117,33 @@ public class Config {
                         (float)fc.getDouble("yaw"),
                         (float)fc.getDouble("pitch")
                 );
+                if(fc.get("CoolingDown") == null){
+                    main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 地标传送冷却时间   已设置为默认(3s).");
+                    fc.set("CoolingDown",3);
+                    fc.save(f);
+                }
+                int coolingDown = fc.getInt("CoolingDown");
                 switch (fc.getString("Requirement.Type")){
                     case "NORMAL":
-                        Warp warp = new NormalWarp(warpName,l);
+                        Warp warp = new NormalWarp(warpName,l,coolingDown);
                         pool.add(warp);
                         break;
                     case "MONEY":
                         if(fc.get("Requirement.Amount") == null){
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已跳过.");
                             break;
                         }
                         int amount = fc.getInt("Requirement.Amount");
-                        Warp warp1 = new MoneyWarp(warpName,l,amount);
+                        Warp warp1 = new MoneyWarp(warpName,l,coolingDown,amount);
                         pool.add(warp1);
                         break;
                     case "PERMISSION":
                         String permission = fc.getString("Requirement.Permission");
                         if(permission == null){
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已跳过.");
                             break;
                         }
-                        Warp warp2 = new PermissionWarp(warpName,l,permission);
+                        Warp warp2 = new PermissionWarp(warpName,l,coolingDown,permission);
                         pool.add(warp2);
                         break;
                     case "ITEM":
@@ -145,16 +151,16 @@ public class Config {
                         List<String> item_lore;
                         int item_amount;
                         if(fc.get("Requirement.Material") == null){
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已跳过.");
                             break;
                         }
                         Material m = Material.getMaterial(fc.getString("Requirement.Material"));
                         if(m == null){
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已跳过.");
                             break;
                         }
                         if(fc.get("Requirement.Amount") == null){
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已跳过.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已跳过.");
                             break;
                         }
 
@@ -168,20 +174,20 @@ public class Config {
                             im.setDisplayName(item_name);
                             is.setItemMeta(im);
                         }else{
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已忽略.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已忽略.");
                         }
                         if(fc.get("Requirement.Lore") != null && fc.isList("Requirement.Lore")){
                             item_lore = fc.getStringList("Requirement.Lore");
                             im.setLore(item_lore);
                             is.setItemMeta(im);
                         }else{
-                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求数据   已忽略.");
+                            main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求数据   已忽略.");
                         }
-                        Warp warp3 = new ItemWarp(warpName,l,is);
+                        Warp warp3 = new ItemWarp(warpName,l,coolingDown,is);
                         pool.add(warp3);
                         break;
                     default:
-                        main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + "加载错误: 需求类型   已跳过.");
+                        main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求类型   已跳过.");
                         break;
                 }
             } catch (IOException | InvalidConfigurationException e) {

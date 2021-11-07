@@ -13,8 +13,8 @@ public class MoneyWarp extends Warp{
 
     private final double Amount;
 
-    public MoneyWarp(String name, Location location, int amount){
-        super(name,location,WarpType.MONEY_WARP);
+    public MoneyWarp(String name, Location location,int coolingDown, int amount){
+        super(name,location,coolingDown,WarpType.MONEY_WARP);
         Amount = amount;
     }
 
@@ -25,11 +25,16 @@ public class MoneyWarp extends Warp{
 
     @Override
     public void teleportTo(Player target) {
+        if(WarpPool.getCoolingDown(target)){
+            target.sendMessage("§4传送冷却中.  请稍后再试.");
+            return;
+        }
         if(checkHasRequirements(target)){
             IUser targetU = new User(target,new Essentials());
             targetU.takeMoney(BigDecimal.valueOf(Amount));
             target.teleport(getLocation());
             target.sendMessage("§6你已传送至地标 §e" + getName());
+            WarpPool.addCoolingDown(target,getCoolingDown());
         }else{
             target.sendMessage("§4你未符合传送需求! 传送被拒绝.");
         }

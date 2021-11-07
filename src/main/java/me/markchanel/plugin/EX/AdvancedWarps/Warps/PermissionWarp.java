@@ -7,8 +7,8 @@ public class PermissionWarp extends Warp{
 
     private final String RequiredPermission;
 
-    public PermissionWarp(String name, Location location, String permission){
-        super(name,location,WarpType.PERMISSION_WARP);
+    public PermissionWarp(String name, Location location,int coolingDown, String permission){
+        super(name,location,coolingDown,WarpType.PERMISSION_WARP);
         RequiredPermission = permission;
     }
 
@@ -19,9 +19,14 @@ public class PermissionWarp extends Warp{
 
     @Override
     public void teleportTo(Player target) {
+        if(WarpPool.getCoolingDown(target)){
+            target.sendMessage("§4传送冷却中.  请稍后再试.");
+            return;
+        }
         if(checkHasRequirements(target)){
             target.teleport(getLocation());
             target.sendMessage("§6你已传送至地标 §e" + getName());
+            WarpPool.addCoolingDown(target,getCoolingDown());
         }else{
             target.sendMessage("§4你未符合传送需求! 传送被拒绝.");
         }

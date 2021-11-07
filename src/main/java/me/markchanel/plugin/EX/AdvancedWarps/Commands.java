@@ -95,12 +95,12 @@ public class Commands implements CommandExecutor {
                     }
                 }
                 if(ss.length == 1){
+                    if(!(sender instanceof Player)){
+                        sender.sendMessage("§4该命令仅玩家可使用!");
+                        return true;
+                    }
                     String targetWarp = ss[0];
                     if(pool.isContains(targetWarp)){
-                        if(!(sender instanceof Player)){
-                            sender.sendMessage("§4该命令仅玩家可使用!");
-                            return true;
-                        }
                         pool.getWarp(ss[0]).teleportTo((Player) sender);
                     }else{
                         sender.sendMessage("§4未定义过该地标! 传送被拒绝.");

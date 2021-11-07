@@ -11,16 +11,26 @@ public abstract class Warp {
     private Location WarpLocation;
     private final File WarpFile;
     private final WarpType Type;
+    private int CoolingDown;
 
-    Warp(String name,Location location,WarpType type){
+    Warp(String name,Location location,int coolingDown,WarpType type){
         WarpName = name;
         WarpLocation = location;
+        CoolingDown = coolingDown;
         Type = type;
         WarpFile = WarpPool.getWarpFile(this);
     }
 
     public String getName(){
         return WarpName;
+    }
+
+    public int getCoolingDown(){
+        return CoolingDown;
+    }
+
+    public void setCoolingDown(int coolingDown){
+        CoolingDown = coolingDown;
     }
 
     protected Location getLocation(){
