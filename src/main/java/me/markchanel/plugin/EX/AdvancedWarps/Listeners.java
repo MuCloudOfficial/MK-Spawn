@@ -4,13 +4,13 @@ import com.earth2me.essentials.signs.EssentialsSign;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import net.ess3.api.IUser;
+import net.ess3.api.events.SignCreateEvent;
 import net.ess3.api.events.SignInteractEvent;
 import net.essentialsx.api.v2.events.WarpModifyEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.SignChangeEvent;
 
 import java.util.Objects;
 
@@ -39,41 +39,61 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void SignChangeListener(SignChangeEvent sce){
-        String WarpPosition = sce.getLine(0);
-        String WarpName = sce.getLine(1);
+    public void SignCreateListener(SignCreateEvent sce){
+        EssentialsSign.ISign sign = sce.getSign();
+        String WarpPosition = sign.getLine(0);
+        String WarpName = sign.getLine(1);
         String Detail;
-        Player targetP = sce.getPlayer();
+        Player targetP = sce.getUser().getBase();
         if(!Objects.equals(WarpPosition, "[warp]")){
             return;
         }
-        if(sce.getLines().length < 2){
-            return;
-        }
-        if(pool.isContains(WarpName)){
+        if(!pool.isContains(WarpName)){
             targetP.sendMessage("§4该地标未被定义过");
             return;
         }
         WarpPosition = "§1§lWarp";
         Detail = "§6§l点击传送至";
-        sce.setLine(0,WarpPosition);
-        sce.setLine(1,Detail);
-        sce.setLine(2,WarpName);
+        sign.setLine(0,WarpPosition);
+        sign.setLine(1,Detail);
+        sign.setLine(2,WarpName);
     }
 
     @EventHandler
     public void SignInteractListener(SignInteractEvent sie){
-        sie.setCancelled(true);
-        EssentialsSign.ISign sign = sie.getSign();
-        String Line1 = sign.getLine(0);
-        String Line3 = sign.getLine(2);
         IUser targetU = sie.getUser();
-        if(!Line1.equals("§1§lWarp")){
-            return;
-        }
-        if(!pool.isContains(Line3)){
-            return;
-        }
-        pool.getWarp(Line3).teleportTo(targetU.getBase());
+        EssentialsSign.ISign sign = sie.getSign();
+        pool.getWarp(sign.getLine(1)).teleportTo(targetU.getBase());
+        sie.setCancelled(true);
     }
+
+    /*
+      //  为未来版本准备.
+      public void SignChangeListener(SignChangeEvent sce){
+              String WarpPosition = sce.getLine(0);
+              String WarpName = sce.getLine(1);
+              String Detail;
+              Player targetP = sce.getPlayer();
+              if(!Objects.equals(WarpPosition, "[warp]")){
+                  return;
+              }
+              if(sce.getLines().length < 2){
+                  return;
+              }
+              if(!pool.isContains(WarpName)){
+                  targetP.sendMessage("§4该地标未被定义过");
+                  return;
+              }
+              WarpPosition = "§1§lWarp";
+              Detail = "§e§l点击传送至";
+              sce.setLine(0,WarpPosition);
+              sce.setLine(1,Detail);
+              sce.setLine(2,WarpName);
+          }
+
+          public void SignInteractListener(PlayerInteractEvent pie){}
+
+     */
+
+
 }

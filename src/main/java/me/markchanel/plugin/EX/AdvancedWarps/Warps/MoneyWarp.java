@@ -25,12 +25,16 @@ public class MoneyWarp extends Warp{
 
     @Override
     public void teleportTo(Player target) {
+        if(!target.hasPermission("essentials.warps." + getName())) {
+            target.sendMessage("§4你没有权限执行此操作");
+            return;
+        }
         if(WarpPool.getCoolingDown(target)){
             target.sendMessage("§4传送冷却中.  请稍后再试.");
             return;
         }
         if(checkHasRequirements(target)){
-            IUser targetU = new User(target,new Essentials());
+            IUser targetU = Essentials.getPlugin(Essentials.class).getUser(target);
             targetU.takeMoney(BigDecimal.valueOf(Amount));
             target.teleport(getLocation());
             target.sendMessage("§6你已传送至地标 §e" + getName());

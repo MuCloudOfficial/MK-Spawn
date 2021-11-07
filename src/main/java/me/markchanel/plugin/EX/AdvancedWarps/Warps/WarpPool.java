@@ -5,6 +5,7 @@ import com.sun.istack.internal.Nullable;
 import me.markchanel.plugin.EX.AdvancedWarps.Config;
 import me.markchanel.plugin.EX.AdvancedWarps.Main;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +25,7 @@ public class WarpPool {
     private static File WarpFolder;
     private static List<Warp> Pool;
     private static Map<Player,Integer> CoolingDownPool;
+    @Deprecated private static Map<Block,Warp> SignWarps;                         // 为未来版本准备.
 
     public WarpPool(){}
 
@@ -32,6 +34,7 @@ public class WarpPool {
         WarpFolder = new File (Config.getEssC().getConfigFile().getParentFile().getAbsolutePath() + File.separator + "warps");
         Pool = new ArrayList<>();
         CoolingDownPool = new HashMap<>();
+        SignWarps = new HashMap<>();
     }
 
     public Warp getWarp(String warpName){
@@ -158,4 +161,7 @@ public class WarpPool {
         }.runTaskTimer(main,0,20L);
     }
 
+    // 为未来版本准备.
+    public void addSignWarp(Block targetBlock ,Warp targetWarp){}
+    public void removeSignWarp(){}
 }
