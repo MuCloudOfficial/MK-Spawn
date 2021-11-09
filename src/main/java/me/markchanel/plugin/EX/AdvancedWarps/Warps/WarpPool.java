@@ -14,10 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WarpPool {
 
@@ -37,7 +34,7 @@ public class WarpPool {
         SignWarps = new HashMap<>();
     }
 
-    public Warp getWarp(String warpName){
+    @Nullable public Warp getWarp(String warpName){
         for(Warp warp : Pool){
             if(warpName.equals(warp.getName())){
                 return warp;
@@ -61,7 +58,7 @@ public class WarpPool {
         try {
             warpFile.createNewFile();
             fc.load(warpFile);
-            fc.set("world",location.getWorld().getUID());
+            fc.set("world", Objects.requireNonNull(location.getWorld()).getUID().toString());
             fc.set("world-name",location.getWorld().getName());
             fc.set("x",location.getX());
             fc.set("y",location.getY());
@@ -69,7 +66,7 @@ public class WarpPool {
             fc.set("yaw",location.getYaw());
             fc.set("pitch",location.getPitch());
             fc.set("name",name);
-            fc.set("lastowner",lastowner.getUniqueId());
+            fc.set("lastowner",lastowner.getUniqueId().toString());
             fc.set("Requirement.Type","NORMAL");
             fc.set("CoolingDown",coolingDown);
             fc.save(warpFile);

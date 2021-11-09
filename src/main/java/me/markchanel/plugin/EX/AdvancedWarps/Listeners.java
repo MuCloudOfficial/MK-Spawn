@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.Objects;
-
 public class Listeners implements Listener {
 
     private static final WarpPool pool = new WarpPool();
@@ -27,13 +25,16 @@ public class Listeners implements Listener {
         switch(wme.getCause()){
             case CREATE:
                 pool.createWarp(targetU.getBase(),targetWarp,targetLoc,3);
+                targetU.sendMessage("§6你已创建一个新地标 " + "§e" + targetWarp);
                 break;
             case DELETE:
                 pool.remove(targetWarp);
+                targetU.sendMessage("§e" + targetWarp + " §6地标已被删除");
                 break;
             case UPDATE:
                 Warp warp = pool.getWarp(targetWarp);
                 pool.modifyName(warp,targetLoc);
+                targetU.sendMessage("§e" + targetWarp + " §6地标位置已更新.");
                 break;
         }
     }
@@ -45,7 +46,7 @@ public class Listeners implements Listener {
         String WarpName = sign.getLine(1);
         String Detail;
         Player targetP = sce.getUser().getBase();
-        if(!Objects.equals(WarpPosition, "[warp]")){
+        if(!WarpPosition.equals("[warp]")){
             return;
         }
         if(!pool.isContains(WarpName)){
@@ -57,6 +58,7 @@ public class Listeners implements Listener {
         sign.setLine(0,WarpPosition);
         sign.setLine(1,Detail);
         sign.setLine(2,WarpName);
+        sce.setCancelled(true);
     }
 
     @EventHandler
