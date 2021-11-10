@@ -1,16 +1,18 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
-import com.earth2me.essentials.signs.EssentialsSign;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import net.ess3.api.IUser;
 import net.ess3.api.events.SignCreateEvent;
-import net.ess3.api.events.SignInteractEvent;
 import net.essentialsx.api.v2.events.WarpModifyEvent;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Listeners implements Listener {
 
@@ -39,63 +41,51 @@ public class Listeners implements Listener {
         }
     }
 
-    @EventHandler
-    public void SignCreateListener(SignCreateEvent sce){
-        EssentialsSign.ISign sign = sce.getSign();
-        String WarpPosition = sign.getLine(0);
-        String WarpName = sign.getLine(1);
-        String Detail;
-        Player targetP = sce.getUser().getBase();
-        if(!WarpPosition.equals("[warp]")){
-            return;
-        }
-        if(!pool.isContains(WarpName)){
-            targetP.sendMessage("§4该地标未被定义过");
-            return;
-        }
-        WarpPosition = "§1§lWarp";
-        Detail = "§6§l点击传送至";
-        sign.setLine(0,WarpPosition);
-        sign.setLine(1,Detail);
-        sign.setLine(2,WarpName);
+    public void EssSignDenied(SignCreateEvent sce){
         sce.setCancelled(true);
+        sce.getUser().sendMessage("§6建议使用 [Warps] 创建地标.");
     }
 
     @EventHandler
-    public void SignInteractListener(SignInteractEvent sie){
-        IUser targetU = sie.getUser();
-        EssentialsSign.ISign sign = sie.getSign();
-        pool.getWarp(sign.getLine(1)).teleportTo(targetU.getBase());
-        sie.setCancelled(true);
+    public void SignCreateListener(SignChangeEvent sce){
+        String warpPosition = sce.getLine(0);
+        String warpName = sce.getLine(1);
+        if(!warpPosition.equals("[Warp]")){
+            return;
+        }
+        if(!pool.isContains(warpName)){
+            sce.setLine(0,"§4§lWarp");
+            sce.setLine(1,"§4§l未定义该地标");
+            sce.setLine(2,warpName);
+            return;
+        }
+        sce.setLine(0,"§1§lWarp");
+        sce.setLine(1,"§e§l点击传送至");
+        sce.setLine(2,warpName);
+        pool.addSignWarp(sce.getBlock(),pool.getWarp(warpName));
     }
 
-    /*
-      //  为未来版本准备.
-      public void SignChangeListener(SignChangeEvent sce){
-              String WarpPosition = sce.getLine(0);
-              String WarpName = sce.getLine(1);
-              String Detail;
-              Player targetP = sce.getPlayer();
-              if(!Objects.equals(WarpPosition, "[warp]")){
-                  return;
-              }
-              if(sce.getLines().length < 2){
-                  return;
-              }
-              if(!pool.isContains(WarpName)){
-                  targetP.sendMessage("§4该地标未被定义过");
-                  return;
-              }
-              WarpPosition = "§1§lWarp";
-              Detail = "§e§l点击传送至";
-              sce.setLine(0,WarpPosition);
-              sce.setLine(1,Detail);
-              sce.setLine(2,WarpName);
-          }
+    @EventHandler
+    public void SignBreakListener(BlockBreakEvent bbe){
+        Player targetP = bbe.getPlayer();
+        Block targetB = bbe.getBlock();
+        if(pool.getSignWarp(targetB) == null){
+            return;
+        }
+        if(!targetP.hasPermission("exaw.admin")){
+            targetP.sendMessage("§4你没有权限破坏传送标识");
+            bbe.setCancelled(true);
+        }
+        pool.removeSignWarp(targetB);
+    }
 
-          public void SignInteractListener(PlayerInteractEvent pie){}
-
-     */
-
+    @EventHandler
+    public void SignInteractListener(PlayerInteractEvent pie){
+        Player targetP = pie.getPlayer();
+        Block targetB = pie.getClickedBlock();
+        if(pool.getSignWarp(targetB) != null) {
+            pool.getSignWarp(targetB).teleportTo(targetP);
+        }
+    }
 
 }

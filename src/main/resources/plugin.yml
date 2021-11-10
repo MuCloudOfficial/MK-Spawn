@@ -1,14 +1,16 @@
 #--------------------------------------------------------------------------
 name: EX-AdvancedWarps
 description: A patch and extension for Essentials.
+website: https://gitee.com/markchanel/ex-advancedwarps
 main: me.markchanel.plugin.EX.AdvancedWarps.Main
 #--------------------------------------------------------------------------
-website: https://gitee.com/markchanel/ex-advancedwarps
+version: 1.0.0.Beta4
 author: Mark_Chanel
-version: 1.0.0.Beta1
 api-version: "1.13"
 depend: [Essentials,Vault]
 loadbefore: [Essentials]
+
+
 
 commands:
   AdvancedWarps:
@@ -24,4 +26,7 @@ commands:
 permissions:
   advancedwarps.admin:
     description: main permission.
+    default: op
+  exaw.teleportwarp.bypass.*:
+    description: Teleport bypass.
     default: op

@@ -1,6 +1,7 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
 import com.earth2me.essentials.Settings;
+import com.sun.xml.internal.messaging.saaj.util.CharReader;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.*;
 import net.ess3.api.IEssentials;
 import net.ess3.api.ISettings;
@@ -8,6 +9,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,8 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +28,7 @@ public class Config {
     private static Economy eco = null;
     private static ISettings EssC;
     private static WarpPool pool = new WarpPool();
-    private static final String Version = "1.0.0.Beta1";
+    private static String Version;
 
     public Config(Main plugin){
         main = plugin;
@@ -39,6 +41,25 @@ public class Config {
         pool.openPool(main);
         convertEssWarps();
         loadWarps();
+        Version();
+    }
+
+    public void Version(){
+        try {
+            InputStream is = main.getClass().getClassLoader().getResourceAsStream("plugin.yml");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int length;
+            while((length = is.read(buf)) != -1){
+                baos.write(buf,0,length);
+            }
+            is.close();
+            baos.close();
+            LineNumberReader lnr = new LineNumberReader(new CharArrayReader(baos.toString("UTF-8").toCharArray()));
+            Version = ((String) lnr.lines().toArray()[6]).substring(9);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void checkEssentials(){
@@ -51,13 +72,11 @@ public class Config {
 
     public void checkVault(){
         if(!main.getServer().getPluginManager().isPluginEnabled("Vault")){
-            main.getServer().getPluginManager().disablePlugin(main);
-            throw new RuntimeException(Main.Prefix + ChatColor.RED + "Vault Not found! Plugin Disabling.");
+            return;
         }
         RegisteredServiceProvider<Economy> rsp = main.getServer().getServicesManager().getRegistration(Economy.class);
         if(rsp == null){
-            main.getServer().getPluginManager().disablePlugin(main);
-            throw new RuntimeException(Main.Prefix + ChatColor.RED + "Economy Module Not found! Plugin Disabling.");
+            return;
         }
         eco = rsp.getProvider();
     }
@@ -189,6 +208,12 @@ public class Config {
                     default:
                         main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.RED + f.getName() + " 加载错误: 需求类型   已跳过.");
                         break;
+                }
+                if(fc.get("Signs") != null){
+                    List<Block> list = (List<Block>) fc.getList("Signs");
+                    for(Block block : list){
+                        pool.addSignWarp(block,pool.getWarp(warpName));
+                    }
                 }
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();

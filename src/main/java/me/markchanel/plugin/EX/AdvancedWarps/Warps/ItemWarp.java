@@ -31,6 +31,12 @@ public class ItemWarp extends Warp{
             target.sendMessage("§4传送冷却中.  请稍后再试.");
             return;
         }
+        if(target.hasPermission("exaw.teleportwarp.bypass." + getName())){
+            target.teleport(getLocation());
+            target.sendMessage("§6你已传送至地标 §e" + getName());
+            WarpPool.addCoolingDown(target,getCoolingDown());
+            return;
+        }
         if(checkHasRequirements(target)){
             target.getInventory().removeItem(RequiredItem);
             target.teleport(getLocation());

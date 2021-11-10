@@ -1,7 +1,5 @@
 package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import me.markchanel.plugin.EX.AdvancedWarps.Config;
 import me.markchanel.plugin.EX.AdvancedWarps.Main;
 import org.bukkit.Location;
@@ -11,6 +9,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class WarpPool {
     private static File WarpFolder;
     private static List<Warp> Pool;
     private static Map<Player,Integer> CoolingDownPool;
-    @Deprecated private static Map<Block,Warp> SignWarps;                         // 为未来版本准备.
+    private static Map<Block,Warp> SignWarps;                         // 为未来版本准备.
 
     public WarpPool(){}
 
@@ -90,11 +90,11 @@ public class WarpPool {
         Pool.clear();
     }
 
-    public void modifyName(Warp warp,Location newLocation){
+    public void modifyName(@NotNull Warp warp, Location newLocation){
         warp.setLocation(newLocation);
     }
 
-    @Nullable public static File getWarpFile(Warp warp){
+    @NotNull public static  File getWarpFile(@NotNull Warp warp){
         return new File(WarpFolder,warp.getName() + ".yml");
     }
 
@@ -158,7 +158,45 @@ public class WarpPool {
         }.runTaskTimer(main,0,20L);
     }
 
-    // 为未来版本准备.
-    public void addSignWarp(Block targetBlock ,Warp targetWarp){}
-    public void removeSignWarp(){}
+    public void addSignWarp(Block targetBlock ,Warp targetWarp){
+        SignWarps.put(targetBlock,targetWarp);
+        FileConfiguration fc = new YamlConfiguration();
+        List<Block> blockList = new ArrayList<>();
+        for(Map.Entry<Block,Warp> entry : SignWarps.entrySet()){
+            if(entry.getValue().equals(targetWarp)){
+                blockList.add(entry.getKey());
+            }
+        }
+        try {
+            fc.load(getWarpFile(targetWarp));
+            blockList.add(targetBlock);
+            fc.set("Signs",blockList);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeSignWarp(Block targetBlock){
+        SignWarps.remove(targetBlock);
+        FileConfiguration fc = new YamlConfiguration();
+        for(Map.Entry<Block,Warp> entry : SignWarps.entrySet()){
+            if(entry.getKey().equals(targetBlock)){
+                try {
+                    fc.load(getWarpFile(entry.getValue()));
+                    List<Block> list = (List<Block>) fc.getList("Signs");
+                    list.remove(targetBlock);
+                    fc.set("Signs",list);
+                } catch (IOException | InvalidConfigurationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Nullable public Warp getSignWarp(Block targetBlock){
+        if(!SignWarps.containsKey(targetBlock)) {
+            return null;
+        }
+        return SignWarps.get(targetBlock);
+    }
 }

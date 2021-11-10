@@ -2,11 +2,17 @@ package me.markchanel.plugin.EX.AdvancedWarps;
 
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +39,56 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] ss) {
         if (cmd.getName().equalsIgnoreCase("advancedwarps")) {
             if (ss.length == 1) {
-                if (ss[0].equalsIgnoreCase("info")) {
+                if(ss[0].equalsIgnoreCase("convertMainMC")){
+                    if(!(sender instanceof Player)){
+                        sender.sendMessage("§4该命令仅玩家可使用");
+                        return true;
+                    }
+                    if(!new File(main.getDataFolder().getParent() + File.separator + "MainMC" + File.separator + "warps.yml").exists()){
+                        sender.sendMessage("§4找不到 MainMC 地标列表       操作已取消");
+                        return true;
+                    }
+                    File targetFile = new File(main.getDataFolder().getParent() + File.separator + "MainMC" + File.separator + "warps.yml");
+                    sender.sendMessage(targetFile.getAbsolutePath());
+                    FileConfiguration fc = new YamlConfiguration();
+                    try {
+                        fc.load(targetFile);
+                        if(fc.get("Warps") == null){
+                            sender.sendMessage("§6无地标可记录        操作已取消");
+                            return true;
+                        }
+                        for(String path : fc.getKeys(true)){
+                            String[] info = path.split("\\.");
+                            if(info.length != 2){ continue; }
+                            String warpName = info[1];
+                            if(pool.isContains(warpName)){
+                                sender.sendMessage("§6来自 MainMC 地标 §e" + warpName + " §6与原有地标产生冲突,已更名为 §e" + warpName + "-copy");
+                                warpName = warpName + "-copy";
+                            }
+                            double x = fc.getDouble(path + ".x");
+                            double y = fc.getDouble(path + ".y");
+                            double z = fc.getDouble(path + ".z");
+                            float yaw = (float)fc.getDouble(path + ".yaw");
+                            float pitch = (float)fc.getDouble(path + ".pitch");
+                            String worldName = fc.getString(path + ".world");
+                            Location location = new Location(main.getServer().getWorld(worldName),x,y,z,yaw,pitch);
+                            Player lastowner = (Player) sender;
+                            pool.createWarp(lastowner,warpName,location,3);
+                        }
+                        sender.sendMessage("§6来自 MainMC 的地标集已转换完毕.");
+                        return true;
+                    } catch (IOException | InvalidConfigurationException e) {
+                        e.printStackTrace();
+                    } catch (NullPointerException npe){
+                        sender.sendMessage("§4发生了一个错误,请检查控制台.");
+                        npe.printStackTrace();
+                    }
+                }
+                if(ss[0].equalsIgnoreCase("info")) {
                     sendHelpPage(sender);
                     return true;
                 }
-                if (ss[0].equalsIgnoreCase("reload")) {
+                if(ss[0].equalsIgnoreCase("reload")) {
                     main.onReload();
                     sender.sendMessage(Main.Prefix + "§a插件加载完毕");
                     return true;
