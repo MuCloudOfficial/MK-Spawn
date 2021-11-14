@@ -22,7 +22,7 @@ public class Listeners implements Listener {
     private static final WarpPool pool = new WarpPool();
 
     @EventHandler
-    public void WarpModifyListener(WarpModifyEvent wme){
+    private void WarpModifyListener(WarpModifyEvent wme){
         wme.setCancelled(true);
         String targetWarp = wme.getWarpName();
         Location targetLoc = wme.getNewLocation();
@@ -45,13 +45,13 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void EssSignDenied(SignCreateEvent sce){
+    private void EssSignDenied(SignCreateEvent sce){
         sce.setCancelled(true);
         sce.getUser().sendMessage("§6建议使用 [EXWarp] 创建地标.");
     }
 
     @EventHandler
-    public void EssSignConvert(SignInteractEvent sie){
+    private void EssSignConvert(SignInteractEvent sie){
         sie.setCancelled(true);
         EssentialsSign.ISign sign = sie.getSign();
         if(sign.getLine(0).equals("§1§lWarp")){
@@ -67,7 +67,7 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void SignCreateListener(SignChangeEvent sce){
+    private void SignCreateListener(SignChangeEvent sce){
         Player targetP = sce.getPlayer();
         String warpPosition = sce.getLine(0);
         String warpName = sce.getLine(1);
@@ -91,7 +91,7 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void SignBreakListener(BlockBreakEvent bbe){
+    private void SignBreakListener(BlockBreakEvent bbe){
         Player targetP = bbe.getPlayer();
         Block targetB = bbe.getBlock();
         if(pool.getSignWarp(targetB) == null){
@@ -105,7 +105,7 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void SignInteractListener(PlayerInteractEvent pie){
+    private void SignInteractListener(PlayerInteractEvent pie){
         Player targetP = pie.getPlayer();
         Block targetB = pie.getClickedBlock();
         if(pie.getAction() != Action.RIGHT_CLICK_BLOCK){

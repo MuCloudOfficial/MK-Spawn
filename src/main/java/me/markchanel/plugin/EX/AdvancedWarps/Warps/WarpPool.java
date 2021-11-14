@@ -130,18 +130,18 @@ public class WarpPool {
         return files.toArray(new File[0]);
     }
 
-    public static void addCoolingDown(Player target,int coolingDown){
+    protected static void addCoolingDown(Player target,int coolingDown){
         if(CoolingDownPool.size() == 0){
             CoolingDownPoolCounting();
         }
         CoolingDownPool.put(target,coolingDown);
     }
 
-    public static boolean getCoolingDown(Player target){
+    protected static boolean getCoolingDown(Player target){
         return CoolingDownPool.containsKey(target);
     }
 
-    public static void CoolingDownPoolCounting(){
+    private static void CoolingDownPoolCounting(){
         new BukkitRunnable(){
             @Override
             public void run() {

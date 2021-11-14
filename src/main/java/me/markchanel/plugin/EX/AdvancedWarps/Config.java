@@ -32,7 +32,7 @@ public class Config {
         main = plugin;
     }
 
-    public void initConfig(){
+    protected void initConfig(){
         checkEssentials();
         checkVault();
         EssC = new Settings((IEssentials) Objects.requireNonNull(main.getServer().getPluginManager().getPlugin("Essentials")));
@@ -42,7 +42,7 @@ public class Config {
         Version();
     }
 
-    public void Version(){
+    private void Version(){
         try {
             InputStream is = main.getClass().getClassLoader().getResourceAsStream("plugin.yml");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -60,7 +60,7 @@ public class Config {
         }
     }
 
-    public void checkEssentials(){
+    private void checkEssentials(){
         if(!main.getServer().getPluginManager().isPluginEnabled("Essentials")){
             main.getServer().getPluginManager().disablePlugin(main);
             throw new RuntimeException(Main.Prefix + ChatColor.RED + "Essentials Not found! Plugin Disabling.");
@@ -68,7 +68,7 @@ public class Config {
         main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.GRAY + "已侦测到 Essentials.");
     }
 
-    public void checkVault(){
+    private void checkVault(){
         if(!main.getServer().getPluginManager().isPluginEnabled("Vault")){
             return;
         }
@@ -79,7 +79,7 @@ public class Config {
         eco = rsp.getProvider();
     }
 
-    public void convertEssWarps(){
+    private void convertEssWarps(){
         FileConfiguration fc = new YamlConfiguration();
         if(pool.listWarpsFile().length == 0){
             main.getServer().getConsoleSender().sendMessage(Main.Prefix + ChatColor.YELLOW + "当前无地标可记录.");
@@ -231,14 +231,14 @@ public class Config {
         return Version;
     }
 
-    public void reload(){
+    protected void reload(){
         pool.clearPool();
         checkEssentials();
         checkVault();
         loadWarps();
     }
 
-    public void clearConfig(){
+    protected void clearConfig(){
         pool.clearPool();
     }
 }
