@@ -1,16 +1,14 @@
 #--------------------------------------------------------------------------
 name: EX-AdvancedWarps
-description: A patch and extension for Essentials.
+description: A patch and extension plugin for Essentials.
 website: https://gitee.com/markchanel/ex-advancedwarps
 main: me.markchanel.plugin.EX.AdvancedWarps.Main
 #--------------------------------------------------------------------------
-version: 1.0.0.Beta4
+version: 1.0.0.Beta6
 author: Mark_Chanel
 api-version: "1.13"
 depend: [Essentials,Vault]
 loadbefore: [Essentials]
-
-
 
 commands:
   AdvancedWarps:
@@ -20,8 +18,7 @@ commands:
   warp:
     description: command form Essentials.
     usage: /warp
-    aliases:
-      - warps
+    aliases: [warps]
 
 permissions:
   advancedwarps.admin:

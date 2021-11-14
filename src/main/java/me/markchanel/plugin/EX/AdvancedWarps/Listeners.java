@@ -1,15 +1,18 @@
 package me.markchanel.plugin.EX.AdvancedWarps;
 
+import com.earth2me.essentials.signs.EssentialsSign;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import net.ess3.api.IUser;
 import net.ess3.api.events.SignCreateEvent;
+import net.ess3.api.events.SignInteractEvent;
 import net.essentialsx.api.v2.events.WarpModifyEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -41,16 +44,38 @@ public class Listeners implements Listener {
         }
     }
 
+    @EventHandler
     public void EssSignDenied(SignCreateEvent sce){
         sce.setCancelled(true);
-        sce.getUser().sendMessage("§6建议使用 [Warps] 创建地标.");
+        sce.getUser().sendMessage("§6建议使用 [EXWarp] 创建地标.");
+    }
+
+    @EventHandler
+    public void EssSignConvert(SignInteractEvent sie){
+        sie.setCancelled(true);
+        EssentialsSign.ISign sign = sie.getSign();
+        if(sign.getLine(0).equals("§1§lWarp")){
+            return;
+        }
+        Warp targetWarp = pool.getWarp(sie.getSign().getLine(1));
+        Block targetB = sie.getSign().getBlock();
+        sign.setLine(0,"§1§lWarp");
+        sign.setLine(1,"§e§l点击传送至");
+        sign.setLine(2,targetWarp.getName());
+        pool.addSignWarp(targetB,targetWarp);
+        sie.getUser().sendMessage("§6地标牌已改变");
     }
 
     @EventHandler
     public void SignCreateListener(SignChangeEvent sce){
+        Player targetP = sce.getPlayer();
         String warpPosition = sce.getLine(0);
         String warpName = sce.getLine(1);
-        if(!warpPosition.equals("[Warp]")){
+        if(!warpPosition.equals("[EXWarp]")){
+            return;
+        }
+        if(!targetP.hasPermission("advancedwarps.admin")){
+            targetP.sendMessage("§4你没有权限执行此操作");
             return;
         }
         if(!pool.isContains(warpName)){
@@ -83,6 +108,9 @@ public class Listeners implements Listener {
     public void SignInteractListener(PlayerInteractEvent pie){
         Player targetP = pie.getPlayer();
         Block targetB = pie.getClickedBlock();
+        if(pie.getAction() != Action.RIGHT_CLICK_BLOCK){
+            return;
+        }
         if(pool.getSignWarp(targetB) != null) {
             pool.getSignWarp(targetB).teleportTo(targetP);
         }
