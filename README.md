@@ -5,7 +5,6 @@ __作者: Mark_Chanel__
 BiliBili UID: 356101590  
 ___  
 
-
 #### 插件概述  
 __一个修复 Essentials 关于地标系统的问题修复与扩充__  
 ___该插件以 Essentials 作为前置___  
@@ -16,7 +15,12 @@ ___该插件以 Essentials 作为前置___
 
 #### 命令  
 - /exaw info  ---  显示插件主页  
+- /exaw convertMainMC   ---   一个实验性功能：将 MainMC 地标转换为 AdvancedWarps 地标（实际上是转换为 Essentials 地标）
 - /warps      ---  显示已有地标(与Essentials中命令相同，但对管理员提供了显示需求地标的实现)  
+
+#### 权限（现有的）
+- advancedwarps.admin          ---   本插件的管理权限
+- exaw.teleportwarp.bypass.*   ---   拥有该权限时可跳过收取地标需求环节直接传送（* 为应用至所有地标，可以更换为地标名以应用至指定地标）
 
 #### Q&A
 > Q: __为什么无法使用牌子传送__  
