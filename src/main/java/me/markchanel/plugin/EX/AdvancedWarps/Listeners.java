@@ -15,10 +15,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Listeners implements Listener {
 
+    private static Main main;
     private static final WarpPool pool = new WarpPool();
+    private static boolean allowConvert = false;
+
+    public Listeners(Main plugin){
+        main = plugin;
+    }
 
     @EventHandler
     private void WarpModifyListener(WarpModifyEvent wme){
@@ -51,9 +58,12 @@ public class Listeners implements Listener {
 
     @EventHandler
     private void EssSignConvert(SignInteractEvent sie){
-        sie.setCancelled(true);
+        if(allowConvert){
+            return;
+        }
         EssentialsSign.ISign sign = sie.getSign();
         if(sign.getLine(0).equals("§1§lWarp")){
+            sie.getUser().sendMessage("§4非合法地标牌");
             return;
         }
         Warp targetWarp = pool.getWarp(sie.getSign().getLine(1));
@@ -97,7 +107,7 @@ public class Listeners implements Listener {
             return;
         }
         if(!targetP.hasPermission("exaw.admin")){
-            targetP.sendMessage("§4你没有权限破坏传送标识");
+            targetP.sendMessage("§4你没有权限破坏传送牌");
             bbe.setCancelled(true);
         }
         pool.removeSignWarp(targetL,pool.getSignWarp(targetL));
@@ -113,6 +123,22 @@ public class Listeners implements Listener {
         if(pool.getSignWarp(targetL) != null) {
             pool.getSignWarp(targetL).teleportTo(targetP);
         }
+    }
+
+    public static void changeAllowConvert(){
+        new BukkitRunnable(){
+            int time = 5;
+
+            @Override
+            public void run() {
+                if(time == 0){
+                    allowConvert = false;
+                    return;
+                }
+                allowConvert = true;
+                time--;
+            }
+        }.runTaskTimer(main,0L,20L);
     }
 
 }

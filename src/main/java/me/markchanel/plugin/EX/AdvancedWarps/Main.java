@@ -18,7 +18,7 @@ public class Main extends JavaPlugin implements Listener {
         config.initConfig();
         Objects.requireNonNull(getCommand("AdvancedWarps")).setExecutor(commands);
         Objects.requireNonNull(getCommand("warp")).setExecutor(commands);
-        getServer().getPluginManager().registerEvents(new Listeners(),this);
+        getServer().getPluginManager().registerEvents(new Listeners(this),this);
         getServer().getConsoleSender().sendMessage(Prefix + ChatColor.YELLOW + "插件已加载完毕.");
     }
 

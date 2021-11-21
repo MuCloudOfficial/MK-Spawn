@@ -2,6 +2,7 @@ package me.markchanel.plugin.EX.AdvancedWarps;
 
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
+import net.ess3.api.events.SignInteractEvent;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +11,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,16 +31,22 @@ public class Commands implements CommandExecutor {
         sender.sendMessage("§c§lEX§7§l-§e§lAdvancedWarps  " + "§6§lVer §b§l" + Config.getVersion());
         sender.sendMessage("§6作者: §7§lMark_Chanel");
         sender.sendMessage("§6插件主页: §b https://gitee.com/markchanel/ex-advancedwarps");
-        sender.sendMessage("§7§m------------------§b§l命令概述§7§m-----------------------");
-        sender.sendMessage("§6 /aw info        显示插件描述及帮助                     ");
-        sender.sendMessage("§6 /warps          显示当前所有地标                       ");
-        sender.sendMessage("§7§m---------------------------------------------------");
+        sender.sendMessage("§7§m----------------------§b§l命令概述§7§m---------------------------");
+        sender.sendMessage("§6 /warps(/warp)                    显示当前所有地标                       ");
+        sender.sendMessage("§6 /exaw info                          显示插件描述及帮助                     ");
+        sender.sendMessage("§6 /exaw convertMainMC      (§4§l实验性功能&6) 将MainMC地标转换为本插件地标                       ");
+        sender.sendMessage("§6 /exaw convertEssSign      (§4§l实验性功能&6) 将Essentials地标牌转换为本插件地标牌                       ");
+        sender.sendMessage("§7§m-----------------------------------------------------------");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] ss) {
         if (cmd.getName().equalsIgnoreCase("advancedwarps")) {
             if (ss.length == 1) {
+                if(ss[0].equalsIgnoreCase("convertEssSign")){
+                    sender.sendMessage("§6点击需要转换地标牌进行转换");
+                    Listeners.changeAllowConvert();
+                }
                 if(ss[0].equalsIgnoreCase("convertMainMC")){
                     if(!(sender instanceof Player)){
                         sender.sendMessage("§4该命令仅玩家可使用");
