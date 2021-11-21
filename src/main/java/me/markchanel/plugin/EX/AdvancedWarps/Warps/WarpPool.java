@@ -3,7 +3,6 @@ package me.markchanel.plugin.EX.AdvancedWarps.Warps;
 import me.markchanel.plugin.EX.AdvancedWarps.Config;
 import me.markchanel.plugin.EX.AdvancedWarps.Main;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,7 +21,7 @@ public class WarpPool {
     private static File WarpFolder;
     private static List<Warp> Pool;
     private static Map<Player,Integer> CoolingDownPool;
-    private static Map<Block,Warp> SignWarps;                         // 为未来版本准备.
+    private static Map<Location,Warp> SignWarps;
 
     public WarpPool(){}
 
@@ -158,45 +157,44 @@ public class WarpPool {
         }.runTaskTimer(main,0,20L);
     }
 
-    public void addSignWarp(Block targetBlock ,Warp targetWarp){
-        SignWarps.put(targetBlock,targetWarp);
+    public void addSignWarp(Location targetLoc ,Warp targetWarp){
+        SignWarps.put(targetLoc,targetWarp);
         FileConfiguration fc = new YamlConfiguration();
-        List<Block> blockList = new ArrayList<>();
-        for(Map.Entry<Block,Warp> entry : SignWarps.entrySet()){
+        List<Location> LocList = new ArrayList<>();
+        for(Map.Entry<Location,Warp> entry : SignWarps.entrySet()){
             if(entry.getValue().equals(targetWarp)){
-                blockList.add(entry.getKey());
+                LocList.add(entry.getKey());
             }
         }
         try {
             fc.load(getWarpFile(targetWarp));
-            blockList.add(targetBlock);
-            fc.set("Signs",blockList);
+            fc.set("Signs", LocList);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
 
-    public void removeSignWarp(Block targetBlock){
-        SignWarps.remove(targetBlock);
+    public void removeSignWarp(Location targetLoc,Warp targetWarp){
+        SignWarps.remove(targetLoc);
         FileConfiguration fc = new YamlConfiguration();
-        for(Map.Entry<Block,Warp> entry : SignWarps.entrySet()){
-            if(entry.getKey().equals(targetBlock)){
-                try {
-                    fc.load(getWarpFile(entry.getValue()));
-                    List<Block> list = (List<Block>) fc.getList("Signs");
-                    list.remove(targetBlock);
-                    fc.set("Signs",list);
-                } catch (IOException | InvalidConfigurationException e) {
-                    e.printStackTrace();
-                }
+        List<Location> LocList = new ArrayList<>();
+        for(Map.Entry<Location,Warp> entry : SignWarps.entrySet()){
+            if(entry.getValue().equals(targetWarp)){
+                LocList.add(entry.getKey());
             }
+        }
+        try {
+            fc.load(getWarpFile(targetWarp));
+            fc.set("Signs", LocList);
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
         }
     }
 
-    @Nullable public Warp getSignWarp(Block targetBlock){
-        if(!SignWarps.containsKey(targetBlock)) {
+    @Nullable public Warp getSignWarp(Location targetLoc){
+        if(!SignWarps.containsKey(targetLoc)) {
             return null;
         }
-        return SignWarps.get(targetBlock);
+        return SignWarps.get(targetLoc);
     }
 }

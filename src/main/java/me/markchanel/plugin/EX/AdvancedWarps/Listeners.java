@@ -8,7 +8,6 @@ import net.ess3.api.events.SignCreateEvent;
 import net.ess3.api.events.SignInteractEvent;
 import net.essentialsx.api.v2.events.WarpModifyEvent;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -58,11 +57,11 @@ public class Listeners implements Listener {
             return;
         }
         Warp targetWarp = pool.getWarp(sie.getSign().getLine(1));
-        Block targetB = sie.getSign().getBlock();
+        Location targetL = sie.getSign().getBlock().getLocation();
         sign.setLine(0,"§1§lWarp");
         sign.setLine(1,"§e§l点击传送至");
         sign.setLine(2,targetWarp.getName());
-        pool.addSignWarp(targetB,targetWarp);
+        pool.addSignWarp(targetL,targetWarp);
         sie.getUser().sendMessage("§6地标牌已改变");
     }
 
@@ -87,32 +86,32 @@ public class Listeners implements Listener {
         sce.setLine(0,"§1§lWarp");
         sce.setLine(1,"§e§l点击传送至");
         sce.setLine(2,warpName);
-        pool.addSignWarp(sce.getBlock(),pool.getWarp(warpName));
+        pool.addSignWarp(sce.getBlock().getLocation(),pool.getWarp(warpName));
     }
 
     @EventHandler
     private void SignBreakListener(BlockBreakEvent bbe){
         Player targetP = bbe.getPlayer();
-        Block targetB = bbe.getBlock();
-        if(pool.getSignWarp(targetB) == null){
+        Location targetL = bbe.getBlock().getLocation();
+        if(pool.getSignWarp(targetL) == null){
             return;
         }
         if(!targetP.hasPermission("exaw.admin")){
             targetP.sendMessage("§4你没有权限破坏传送标识");
             bbe.setCancelled(true);
         }
-        pool.removeSignWarp(targetB);
+        pool.removeSignWarp(targetL,pool.getSignWarp(targetL));
     }
 
     @EventHandler
     private void SignInteractListener(PlayerInteractEvent pie){
         Player targetP = pie.getPlayer();
-        Block targetB = pie.getClickedBlock();
+        Location targetL = pie.getClickedBlock().getLocation();
         if(pie.getAction() != Action.RIGHT_CLICK_BLOCK){
             return;
         }
-        if(pool.getSignWarp(targetB) != null) {
-            pool.getSignWarp(targetB).teleportTo(targetP);
+        if(pool.getSignWarp(targetL) != null) {
+            pool.getSignWarp(targetL).teleportTo(targetP);
         }
     }
 

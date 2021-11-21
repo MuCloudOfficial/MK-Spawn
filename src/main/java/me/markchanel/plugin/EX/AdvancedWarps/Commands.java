@@ -44,6 +44,10 @@ public class Commands implements CommandExecutor {
                         sender.sendMessage("§4该命令仅玩家可使用");
                         return true;
                     }
+                    if(!sender.hasPermission("advancedwarps.admin")){
+                        sender.sendMessage("§4你没有权限执行此操作");
+                        return true;
+                    }
                     if(!new File(main.getDataFolder().getParent() + File.separator + "MainMC" + File.separator + "warps.yml").exists()){
                         sender.sendMessage("§4找不到 MainMC 地标列表       操作已取消");
                         return true;

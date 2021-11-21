@@ -208,9 +208,9 @@ public class Config {
                         break;
                 }
                 if(fc.get("Signs") != null){
-                    List<Block> list = (List<Block>) fc.getList("Signs");
-                    for(Block block : list){
-                        pool.addSignWarp(block,pool.getWarp(warpName));
+                    List<Location> list = (List<Location>) fc.getList("Signs");
+                    for(Location loc : list){
+                        pool.addSignWarp(loc,pool.getWarp(warpName));
                     }
                 }
             } catch (IOException | InvalidConfigurationException e) {
