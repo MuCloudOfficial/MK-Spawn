@@ -58,15 +58,15 @@ public class Listeners implements Listener {
 
     @EventHandler
     private void EssSignConvert(SignInteractEvent sie){
-        if(allowConvert){
+        if(!allowConvert){
             return;
         }
         EssentialsSign.ISign sign = sie.getSign();
-        if(sign.getLine(0).equals("§1§lWarp")){
-            sie.getUser().sendMessage("§4非合法地标牌");
+        if(sign.getLine(0).equals("§1§lWarp") || !pool.isContains(sign.getLine(1))){
+            sie.getUser().sendMessage("§4非合法地标牌或未定义过该地标");
             return;
         }
-        Warp targetWarp = pool.getWarp(sie.getSign().getLine(1));
+        Warp targetWarp = pool.getWarp(sign.getLine(1));
         Location targetL = sie.getSign().getBlock().getLocation();
         sign.setLine(0,"§1§lWarp");
         sign.setLine(1,"§e§l点击传送至");
@@ -115,11 +115,11 @@ public class Listeners implements Listener {
 
     @EventHandler
     private void SignInteractListener(PlayerInteractEvent pie){
-        Player targetP = pie.getPlayer();
-        Location targetL = pie.getClickedBlock().getLocation();
         if(pie.getAction() != Action.RIGHT_CLICK_BLOCK){
             return;
         }
+        Player targetP = pie.getPlayer();
+        Location targetL = pie.getClickedBlock().getLocation();
         if(pool.getSignWarp(targetL) != null) {
             pool.getSignWarp(targetL).teleportTo(targetP);
         }
