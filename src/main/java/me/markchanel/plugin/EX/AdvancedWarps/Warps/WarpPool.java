@@ -167,8 +167,10 @@ public class WarpPool {
             }
         }
         try {
-            fc.load(getWarpFile(targetWarp));
+            File targetF = getWarpFile(targetWarp);
+            fc.load(targetF);
             fc.set("Signs", LocList);
+            fc.save(targetF);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
@@ -184,8 +186,10 @@ public class WarpPool {
             }
         }
         try {
-            fc.load(getWarpFile(targetWarp));
+            File targetF = getWarpFile(targetWarp);
+            fc.load(targetF);
             fc.set("Signs", LocList);
+            fc.save(targetF);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
