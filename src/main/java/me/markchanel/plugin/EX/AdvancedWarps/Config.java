@@ -54,7 +54,7 @@ public class Config {
             is.close();
             baos.close();
             LineNumberReader lnr = new LineNumberReader(new CharArrayReader(baos.toString("UTF-8").toCharArray()));
-            Version = ((String) lnr.lines().toArray()[6]).substring(9);
+            Version = ((String) lnr.lines().toArray()[4]).substring(9);
         } catch (IOException e) {
             e.printStackTrace();
         }

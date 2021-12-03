@@ -15,12 +15,47 @@ ___该插件以 Essentials 作为前置___
 
 #### 命令  
 - /exaw info  ---  显示插件主页  
+- /exaw convertEssSign   ---   一个实验性功能 ：将 Essentials 地标牌转换为本插件实现
 - /exaw convertMainMC   ---   一个实验性功能：将 MainMC 地标转换为 AdvancedWarps 地标（实际上是转换为 Essentials 地标）
 - /warps      ---  显示已有地标(与Essentials中命令相同，但对管理员提供了显示需求地标的实现)  
 
 #### 权限（现有的）
 - advancedwarps.admin          ---   本插件的管理权限
 - exaw.teleportwarp.bypass.*   ---   拥有该权限时可跳过收取地标需求环节直接传送（* 为应用至所有地标，可以更换为地标名以应用至指定地标）
+
+#### 关于地标文件
+EX-AdvancedWarps 是基于 Essentials 实现的高级地标插件，其所有关于地标的设置都基于 Essentials 地标文件  
+__注意：Sign 设置项仅用于标记位置，请勿改动__  
+```yaml
+# 普通地标
+Requirements: 
+  Type: NORMAL
+```
+
+```yaml
+# 金钱地标
+Requirements:
+  Type: MONEY
+  Amount: X #金钱数
+```
+
+```yaml
+# 权限地标
+Requirements: 
+  Type: PERMISSION
+  Permission: xxx.xxx #权限
+```
+
+```yaml
+# 物品地标
+Requirements: 
+  Type: ITEM
+  Material: #物品标记，需准确输入
+  Amount: #物品数
+  Name: #物品名
+  Lore: [] #物品描述
+#物品名可用 ‘§’ （在持续按住 Alt 键的同时顺次输入小键盘1,6,7即可）后加颜色代码以显示颜色
+```
 
 #### Q&A
 > Q: __为什么无法使用牌子传送__  
