@@ -1,4 +1,4 @@
-package me.markchanel.plugin.EX.AdvancedWarps;
+package me.mangomilktea.plugin.EX.AdvancedWarps;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;

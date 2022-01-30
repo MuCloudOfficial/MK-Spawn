@@ -1,24 +1,25 @@
-package me.markchanel.plugin.EX.AdvancedWarps.Warps;
+package me.mangomilktea.plugin.EX.AdvancedWarps.Warps;
 
+import com.earth2me.essentials.Essentials;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Config;
+import net.ess3.api.IUser;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-public class ItemWarp extends Warp{
+public class MoneyWarp extends Warp{
 
-    private final ItemStack RequiredItem;
+    private final double Amount;
 
-    public ItemWarp(String name, Location location,int coolingDown, ItemStack requirements){
-        super(name,location,coolingDown,WarpType.ITEM_WARP);
-        RequiredItem = requirements;
+    public MoneyWarp(String name, Location location,int coolingDown, int amount){
+        super(name,location,coolingDown,WarpType.MONEY_WARP);
+        Amount = amount;
     }
 
     @Override
     public Boolean checkHasRequirements(Player target) {
-        return target.getInventory().contains(RequiredItem);
+        return Config.getEco().getBalance(target) >= Amount;
     }
 
     @Override
@@ -38,7 +39,8 @@ public class ItemWarp extends Warp{
             return;
         }
         if(checkHasRequirements(target)){
-            target.getInventory().removeItem(RequiredItem);
+            IUser targetU = Essentials.getPlugin(Essentials.class).getUser(target);
+            targetU.takeMoney(BigDecimal.valueOf(Amount));
             target.teleport(getLocation());
             target.sendMessage("§6你已传送至地标 §e" + getName());
             WarpPool.addCoolingDown(target,getCoolingDown());
@@ -47,11 +49,8 @@ public class ItemWarp extends Warp{
         }
     }
 
-    // 将在未来版本使用的方法.
-    public Integer getAmount(){ return RequiredItem.getAmount(); }
-    private String getRequiredItemName(){ return RequiredItem.getItemMeta().getDisplayName(); }
-    private List<String> getRequiredItemLore(){ return RequiredItem.getItemMeta().getLore(); }
-    private Material getMaterial(){ return RequiredItem.getType(); }
-    private ItemStack getRequirements() { return RequiredItem; }
-    // -----------------------------------
+    // 为后续版本准备.
+    private Double getRequirements() {
+        return Amount;
+    }
 }

@@ -1,8 +1,8 @@
-package me.markchanel.plugin.EX.AdvancedWarps;
+package me.mangomilktea.plugin.EX.AdvancedWarps;
 
 import com.earth2me.essentials.signs.EssentialsSign;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.Warp;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Warps.Warp;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Warps.WarpPool;
 import net.ess3.api.IUser;
 import net.ess3.api.events.SignCreateEvent;
 import net.ess3.api.events.SignInteractEvent;

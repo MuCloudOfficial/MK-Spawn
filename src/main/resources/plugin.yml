@@ -1,11 +1,11 @@
 #--------------------------------------------------------------------------
 name: EX-AdvancedWarps
 description: A patch and extension plugin for Essentials.
-main: me.markchanel.plugin.EX.AdvancedWarps.Main
+main: me.mangomilktea.plugin.EX.AdvancedWarps.Main
 version: 1.0.0.Beta7
 #--------------------------------------------------------------------------
-author: Mark_Chanel
-website: https://gitee.com/markchanel/ex-advancedwarps
+author: Mango_MilkTea
+website: https://gitee.com/mango_milktea/ex-advancedwarps
 api-version: "1.13"
 depend: [Essentials,Vault]
 loadbefore: [Essentials]

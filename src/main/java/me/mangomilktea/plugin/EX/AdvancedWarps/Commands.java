@@ -1,7 +1,7 @@
-package me.markchanel.plugin.EX.AdvancedWarps;
+package me.mangomilktea.plugin.EX.AdvancedWarps;
 
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpPool;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.WarpType;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Warps.WarpPool;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Warps.WarpType;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,7 +27,7 @@ public class Commands implements CommandExecutor {
 
     private void sendHelpPage(CommandSender sender){
         sender.sendMessage("§7§l| §c§lEX§7§l-§e§lAdvancedWarps  " + "§6§lVer §b§l" + Config.getVersion());
-        sender.sendMessage("§7§l| §6作者: §7§lMark_Chanel");
+        sender.sendMessage("§7§l| §6作者: §7§lMango_MilkTea");
         sender.sendMessage("§7§l| §6插件主页: §b https://gitee.com/markchanel/ex-advancedwarps");
         sender.sendMessage("§7§l| §7§m----------------------§b§l命令概述§7§m---------------------------");
         sender.sendMessage("§7§l| §6 /warps(/warp)          显示当前所有地标  ");

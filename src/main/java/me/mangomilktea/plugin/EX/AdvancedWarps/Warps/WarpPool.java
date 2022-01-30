@@ -1,7 +1,7 @@
-package me.markchanel.plugin.EX.AdvancedWarps.Warps;
+package me.mangomilktea.plugin.EX.AdvancedWarps.Warps;
 
-import me.markchanel.plugin.EX.AdvancedWarps.Config;
-import me.markchanel.plugin.EX.AdvancedWarps.Main;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Config;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Main;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

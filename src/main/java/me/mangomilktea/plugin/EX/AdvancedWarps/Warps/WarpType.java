@@ -1,4 +1,4 @@
-package me.markchanel.plugin.EX.AdvancedWarps.Warps;
+package me.mangomilktea.plugin.EX.AdvancedWarps.Warps;
 
 public enum WarpType {
     NORMAL,

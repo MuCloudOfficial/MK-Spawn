@@ -1,26 +1,24 @@
-package me.markchanel.plugin.EX.AdvancedWarps.Warps;
+package me.mangomilktea.plugin.EX.AdvancedWarps.Warps;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-import me.markchanel.plugin.EX.AdvancedWarps.Config;
-import net.ess3.api.IUser;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-public class MoneyWarp extends Warp{
+public class ItemWarp extends Warp{
 
-    private final double Amount;
+    private final ItemStack RequiredItem;
 
-    public MoneyWarp(String name, Location location,int coolingDown, int amount){
-        super(name,location,coolingDown,WarpType.MONEY_WARP);
-        Amount = amount;
+    public ItemWarp(String name, Location location,int coolingDown, ItemStack requirements){
+        super(name,location,coolingDown,WarpType.ITEM_WARP);
+        RequiredItem = requirements;
     }
 
     @Override
     public Boolean checkHasRequirements(Player target) {
-        return Config.getEco().getBalance(target) >= Amount;
+        return target.getInventory().contains(RequiredItem);
     }
 
     @Override
@@ -40,8 +38,7 @@ public class MoneyWarp extends Warp{
             return;
         }
         if(checkHasRequirements(target)){
-            IUser targetU = Essentials.getPlugin(Essentials.class).getUser(target);
-            targetU.takeMoney(BigDecimal.valueOf(Amount));
+            target.getInventory().removeItem(RequiredItem);
             target.teleport(getLocation());
             target.sendMessage("§6你已传送至地标 §e" + getName());
             WarpPool.addCoolingDown(target,getCoolingDown());
@@ -50,8 +47,11 @@ public class MoneyWarp extends Warp{
         }
     }
 
-    // 为后续版本准备.
-    private Double getRequirements() {
-        return Amount;
-    }
+    // 将在未来版本使用的方法.
+    public Integer getAmount(){ return RequiredItem.getAmount(); }
+    private String getRequiredItemName(){ return RequiredItem.getItemMeta().getDisplayName(); }
+    private List<String> getRequiredItemLore(){ return RequiredItem.getItemMeta().getLore(); }
+    private Material getMaterial(){ return RequiredItem.getType(); }
+    private ItemStack getRequirements() { return RequiredItem; }
+    // -----------------------------------
 }

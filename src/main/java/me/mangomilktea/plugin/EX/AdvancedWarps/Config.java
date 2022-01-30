@@ -1,14 +1,13 @@
-package me.markchanel.plugin.EX.AdvancedWarps;
+package me.mangomilktea.plugin.EX.AdvancedWarps;
 
 import com.earth2me.essentials.Settings;
-import me.markchanel.plugin.EX.AdvancedWarps.Warps.*;
+import me.mangomilktea.plugin.EX.AdvancedWarps.Warps.*;
 import net.ess3.api.IEssentials;
 import net.ess3.api.ISettings;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

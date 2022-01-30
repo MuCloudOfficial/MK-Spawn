@@ -1,4 +1,4 @@
-package me.markchanel.plugin.EX.AdvancedWarps.Warps;
+package me.mangomilktea.plugin.EX.AdvancedWarps.Warps;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
