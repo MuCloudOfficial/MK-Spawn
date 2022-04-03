@@ -1,7 +1,7 @@
 ### EX-AdvancedWarps  
 ___  
 ___当前插件仍在测试阶段___  
-__作者: Mark_Chanel__  
+__作者: Mango_MilkTea__  
 BiliBili UID: 356101590  
 ___  
 
