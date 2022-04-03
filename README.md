@@ -1,6 +1,6 @@
 ### EX-AdvancedWarps  
 ___  
-___:fa-exclamation-triangle:当前插件仍在测试阶段___  
+___当前插件仍在测试阶段___  
 __作者: Mark_Chanel__  
 BiliBili UID: 356101590  
 ___  
