@@ -1,2 +1,4 @@
-package me.mucloud.plugin.MK.Spawn.SignModule;public class SignPool {
+package me.mucloud.plugin.MK.Spawn.SignModule;
+
+public class SignPool {
 }

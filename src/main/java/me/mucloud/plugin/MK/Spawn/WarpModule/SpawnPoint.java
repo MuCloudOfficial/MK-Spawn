@@ -1,2 +1,5 @@
-package me.mucloud.plugin.MK.Spawn.WarpModule;public class SpawnPoint {
+package me.mucloud.plugin.MK.Spawn.WarpModule;
+
+public class SpawnPoint{
+
 }

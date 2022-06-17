@@ -1,2 +1,4 @@
-package me.mucloud.plugin.MK.Spawn.WarpModule;public class ItemWarp {
+package me.mucloud.plugin.MK.Spawn.WarpModule.Warps;
+
+public class ItemWarp {
 }
