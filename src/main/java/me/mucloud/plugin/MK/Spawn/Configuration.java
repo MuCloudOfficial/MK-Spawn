@@ -7,14 +7,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class Configuration {
+public class Configuration implements IConfiguration{
 
     private final Main main;
     private static File ConfigFolder;
     private static File ConfigFile;
     private static File WarpFolder;
+    private static File LocaleFolder;
     private static File SpawnPointFile;
 
+    private String Locale;
     private int TeleportCoolingDown;
     private boolean GUIMode;
     private boolean UseSignWarp;
@@ -24,11 +26,13 @@ public class Configuration {
         ConfigFolder = main.getDataFolder();
         ConfigFile = new File(ConfigFolder,"config.yml");
         WarpFolder = new File(ConfigFolder,"warps");
+        LocaleFolder = new File(ConfigFolder,"Locale");
         SpawnPointFile = new File(ConfigFolder,"spawnpoint.yml");
     }
 
     public void onLoad(){
-
+        checkIntegrity();
+        fetchConfig();
     }
 
     private void checkIntegrity(){
@@ -40,6 +44,9 @@ public class Configuration {
         }
         if(!WarpFolder.exists()){
             WarpFolder.mkdir();
+        }
+        if(!LocaleFolder.exists()){
+            LocaleFolder.mkdir();
         }
         try {
             if (!SpawnPointFile.exists()) {
@@ -57,21 +64,35 @@ public class Configuration {
             TeleportCoolingDown = fc.get("Settings.TeleportCoolingDown") == null ? fc.getInt("Settings.TeleportCoolingDown") : 10;
             GUIMode = fc.getBoolean("Setting.GUIMode");
             UseSignWarp = fc.getBoolean("Settings.UseSignWarp");
+            Locale = fc.get("Settings.Locale") == null ? fc.getString("Settings.Locale") : "zh_CN";
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public int getTeleportCoolingDown(){
+    @Override public int getTeleportCoolingDown(){
         return TeleportCoolingDown;
     }
 
-    public boolean isGUIMode() {
+    @Override public boolean isGUIMode(){
         return GUIMode;
     }
 
-    public boolean isUseSignWarp() {
+    @Override public boolean isUseSignWarp(){
         return UseSignWarp;
     }
+
+    @Override public File getWarpFolder(){
+        return WarpFolder;
+    }
+
+    @Override public File getLocaleFolder(){
+        return LocaleFolder;
+    }
+
+    @Override public String getLocale(){
+        return Locale;
+    }
+
 
 }
