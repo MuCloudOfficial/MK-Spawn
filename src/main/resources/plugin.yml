@@ -1,0 +1,49 @@
+#================================================================
+name: MK-Spawn
+main: me.mucloud.plugin.MK.Spawn.Main
+version: 1.2.0
+author: Mu_Cloud
+#================================================================
+api-version: 1.13
+softdepend: [ Essentials , CMI , MainMC ]
+
+description: The MK-Spawn Plugin for Minecraft Server by Mu_Cloud.
+website: https://github.com/MuCloudOfficial/MK-Spawn
+
+# Command
+# Only As Sign
+# View the website to know the details of the Commands.
+commands:
+  mkspawn:
+    description: Main Command
+    Usage: Null.
+    aliases: [ mks ]
+
+# Permissions
+# Only As Sign
+# View the website to know the details of the permissions.
+permissions:
+  mksp.admin:
+    description: ""
+  mksp.warps:
+    description: ""
+  mksp.warp.*:
+    description: ""
+  mksp.warp.requirement.bypass.*:
+    description: ""
+  mksp.spawn:
+    description: ""
+  mksp.setspawn:
+    description: ""
+  mksp.setwarp:
+    description: ""
+  mksp.delwarp:
+    description: ""
+  mksp.delspawn:
+    description: ""
+  mksp.createsign:
+    description: ""
+  mksp.destorysign:
+    description: ""
+  mksp.usesign:
+    description: ""

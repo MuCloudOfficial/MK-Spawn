@@ -23,7 +23,7 @@ Settings:
   Language: zh_CN
 
   # 传送间隔时间，以秒为单位
-  CoolingDown: 5
+  CoolingDown: 3
 
   # 是否使用 GUI 模式
   GUIMode: true
